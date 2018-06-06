@@ -1,5 +1,8 @@
 from flask import Blueprint, render_template
 
+from project import db
+from project.models import Event
+
 
 #### Blueprint config #################################################
 #######################################################################
