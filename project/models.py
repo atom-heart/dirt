@@ -1,5 +1,6 @@
 from project import db
-from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy import func, and_
 
 
 #### Games ############################################################
@@ -60,7 +61,6 @@ class Track(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('countries.id'))
 
     # Relationships
-    splits = db.relationship('Split', backref='track', lazy='dynamic')
     # Backrefs: game, country
 
 
@@ -71,7 +71,6 @@ class Weather(db.Model):
     conditions = db.Column(db.String, nullable=False)
 
     # Relationships
-    splits = db.relationship('Split', backref='weather', lazy='dynamic')
     # Backrefs: tracks
 
 
@@ -81,8 +80,6 @@ class Car(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
-    # Relationships
-    times = db.relationship('Time', backref='car', lazy='dynamic')
     # Backrefs: car_classes
 
 
@@ -103,6 +100,7 @@ class Split(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order = db.Column(db.Integer, nullable=True)
+    finished = db.Column(db.Boolean, default=False, nullable=False)
 
     # Foreign keys
     track_id = db.Column(db.Integer, db.ForeignKey('tracks.id'))
@@ -110,21 +108,74 @@ class Split(db.Model):
     stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'))
 
     # Relationships
-    times = db.relationship('Time', backref='split', lazy='dynamic')
-    # Backrefs: track, weather, stage
+    track = db.relationship('Track', lazy='joined')
+    weather = db.relationship('Weather', lazy='joined')
+    # Backrefs: stage
+
+    @hybrid_property
+    def times(self):
+        return db.session\
+            .query(Player.id, Player.name, Time.time, Time.disqualified)\
+            .join(Time, Time.player_id == Player.id)\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Time.player_id,
+                EventPlayer.event_id == self.stage.event_id))\
+            .filter(Time.split_id == self.id)\
+            .order_by(Time.time, Time.disqualified, EventPlayer.order)\
+            .all()
+
+
+    @hybrid_property
+    def previous(self):
+        return Split.query\
+            .filter(Split.stage_id == self.stage_id)\
+            .filter(Split.order == self.order - 1)\
+            .first()
+
+
+    @hybrid_property
+    def progress_all(self):
+        return db.session\
+            .query(Player.id, Player.name, func.sum(Time.time))\
+            .join(Time, Time.player_id == Player.id)\
+            .join(Split, Split.id == Time.split_id)\
+            .filter(Split.stage_id == self.stage_id)\
+            .filter(Split.order <= self.order)\
+            .group_by(Player.id)\
+            .order_by(func.sum(Time.time))\
+            .all()
+
+
+    @hybrid_property
+    def progress_disq(self):
+        return db.session\
+            .query(Player.id, Player.name, Time.time)\
+            .join(Time, Time.player_id == Player.id)\
+            .join(Split, Split.id == Time.split_id)\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Time.player_id,
+                EventPlayer.event_id == self.stage.event_id))\
+            .filter(Time.disqualified == True)\
+            .filter(Split.stage_id == self.stage_id)\
+            .filter(Split.order <= self.order)\
+            .group_by(Player.id, EventPlayer.order, Time.time)\
+            .order_by(EventPlayer.order)\
+            .all()
 
 
 class Time(db.Model):
     __tablename__ = 'times'
 
     id = db.Column(db.Integer, primary_key=True)
-    time = db.Column(db.Interval, nullable=False)
+    time = db.Column(db.Interval, nullable=True)
+    disqualified = db.Column(db.Boolean, nullable=True)
 
     # Foreign keys
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'))
-    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'))
     split_id = db.Column(db.Integer, db.ForeignKey('splits.id'))
-    # Backrefs: player, car, split
+
+    player = db.relationship('Player', lazy='joined')
+    # Backrefs: player, split
 
 
 #### Events ###########################################################
@@ -149,8 +200,8 @@ class StageRanking(db.Model):
 
     stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'), primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
-    time_total = db.Column(db.Interval, nullable=False)
-    points = db.Column(db.Interval, nullable=True)
+    time_total = db.Column(db.Interval, nullable=True)
+    points = db.Column(db.Integer, nullable=True)
 
     # Relationships
     player = db.relationship('Player')
@@ -171,7 +222,7 @@ class Player(db.Model):
     name = db.Column(db.String, nullable=False)
 
     # Relationships
-    times = db.relationship('Time', backref='player', lazy='dynamic')
+    times = db.relationship('Time', lazy='dynamic')
     events = db.relationship('EventPlayer', backref='player', lazy='dynamic')
 
 
@@ -192,10 +243,13 @@ class Event(db.Model):
     def players(self):
         """Returns a dictionary of players in format: {order: player}"""
         players = {}
+        # order_by(EventPlayer.points, EventPlayer.order)
         for event_player in self.event_players.order_by(EventPlayer.order).all():
-            players[event_player.order] = event_player.player
+            players[event_player.player_id] = event_player.player
         return players
-
+        # return db.session.query(EventPlayer, StageRanking.points).filter(EventPlayer.event_id == self.id)\
+        #     .filter(StageRanking.player_id == 1).all()
+        # return self.event
 
 
 class Stage(db.Model):

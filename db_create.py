@@ -17,7 +17,9 @@ db.create_all()
 # Create players
 players = [
     Player(name='Filip'),
-    Player(name='Michał')
+    Player(name='Michał'),
+    Player(name='Radek'),
+    Player(name='Dominik')
 ]
 
 # Create games
@@ -65,25 +67,28 @@ cars = [
 # Create splits
 splits = [
     Split(track=tracks[0], weather=weather[0], order=1),
-    Split(track=tracks[0], weather=weather[1], order=2),
+    Split(track=tracks[3], weather=weather[1], order=2),
     Split(track=tracks[1], weather=weather[3], order=1),
-    Split(track=tracks[2], weather=weather[2])
 ]
 
 # Create times
 times = [
-    Time(time=td(minutes=3, seconds=56, microseconds=333000), player=players[0],
-         car=cars[1], split=splits[0]),
-    Time(time=td(minutes=4, seconds=12, microseconds=107000), player=players[1],
-         car=cars[0], split=splits[0]),
+    Time(time=td(minutes=3, seconds=56, microseconds=560000), player=players[0],
+         split=splits[0]),
+    Time(time=td(minutes=4, seconds=44, microseconds=380000), player=players[1], split=splits[0]),
     Time(time=td(minutes=3, seconds=45, microseconds=333000), player=players[0],
-         car=cars[1], split=splits[1]),
-    Time(time=td(minutes=3, seconds=51, microseconds=107000), player=players[1],
-         car=cars[0], split=splits[1]),
+         split=splits[1]),
+    Time(player=players[1],
+         split=splits[1], disqualified=True),
     Time(time=td(minutes=6, seconds=45, microseconds=730000), player=players[0],
-         car=cars[1], split=splits[2]),
+         split=splits[2]),
     Time(time=td(minutes=6, seconds=33, microseconds=900000), player=players[1],
-         car=cars[0], split=splits[2]),
+         split=splits[2]),
+    Time(time=td(minutes=3, seconds=45, microseconds=333000), player=players[2], split=splits[0]),
+    Time(time=td(minutes=4, seconds=45, microseconds=138000), player=players[2], split=splits[1]),
+    Time(player=players[2], split=splits[2]),
+    Time(player=players[3], split=splits[1]),
+    Time(time=td(minutes=5, seconds=42, microseconds=123000), player=players[3], split=splits[0]),
 ]
 
 # Create event
@@ -91,11 +96,15 @@ event = Event(name='Kentish Town Cup 2018', game=games[0], car_classes=car_class
 
 event_players = [
     EventPlayer(order=2, car=cars[1]),
-    EventPlayer(order=1, car=cars[0])
+    EventPlayer(order=1, car=cars[0]),
+    EventPlayer(order=3, car=cars[1]),
+    EventPlayer(order=4, car=cars[0])
 ]
 
 event_players[0].player = players[0]
 event_players[1].player = players[1]
+event_players[2].player = players[2]
+event_players[3].player = players[3]
 
 event.event_players.extend(event_players)
 
@@ -106,12 +115,24 @@ stages = [
 ]
 
 # Create stage ranking
-stage_rankings = [StageRanking(time_total=times[0].time + times[2].time + times[4].time), StageRanking(time_total=times[1].time + times[3].time)]
+stage_rankings = [
+    StageRanking(time_total=times[0].time + times[2].time + times[4].time, points=5),
+    StageRanking(time_total=times[0].time, points=3),
+    StageRanking(),
+    StageRanking(time_total=times[0].time + times[4].time, points=5),
+    StageRanking(time_total=times[0].time + times[2].time, points=3),
+    StageRanking()
+]
 
 stage_rankings[0].player = players[0]
 stage_rankings[1].player = players[1]
+stage_rankings[2].player = players[2]
+stage_rankings[3].player = players[0]
+stage_rankings[4].player = players[1]
+stage_rankings[5].player = players[2]
 
-stages[0].stage_rankings.extend(stage_rankings)
+stages[0].stage_rankings.extend(stage_rankings[:3])
+stages[1].stage_rankings.extend(stage_rankings[3:6])
 
 # Add to database
 db.session.add_all(players)

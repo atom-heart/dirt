@@ -22,7 +22,7 @@ db = SQLAlchemy(app)
 #######################################################################
 
 # Import
-from project.events.views import events_blueprint
+from project.api.views import api_blueprint
 
 # Register
-app.register_blueprint(events_blueprint)
+app.register_blueprint(api_blueprint)
