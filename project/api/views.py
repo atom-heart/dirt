@@ -4,11 +4,6 @@ from project.models import Split
 
 from project.api.helpers import get_split_prog, add_positions, add_pos_diffs, add_time_diffs, format_times_diffs, group_players
 
-#### API globals ######################################################
-#######################################################################
-
-split_keys = ('id', 'name', 'time', 'disqualified')
-
 
 #### Blueprint config #################################################
 #######################################################################
@@ -22,8 +17,7 @@ api_blueprint = Blueprint('api', __name__)
 @api_blueprint.route('/api/split/<id>')
 def api_split(id):
     # Get player times form given split
-    _split = Split.query.get(id)
-    _times = _split.times
+    _times = Split.query.get(id).times
 
     # Parse to a dict
     ranking = {}

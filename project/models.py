@@ -1,6 +1,6 @@
 from project import db
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, case
 
 
 #### Games ############################################################
@@ -121,7 +121,11 @@ class Split(db.Model):
                 EventPlayer.player_id == Time.player_id,
                 EventPlayer.event_id == self.stage.event_id))\
             .filter(Time.split_id == self.id)\
-            .order_by(Time.time, Time.disqualified, EventPlayer.order)\
+            .order_by(
+                case([(Time.time != None, 0),], else_=1),
+                Time.time,
+                case([(Time.disqualified != None, 0),], else_=1),
+                EventPlayer.order)\
             .all()
 
 
@@ -175,7 +179,8 @@ class Time(db.Model):
     split_id = db.Column(db.Integer, db.ForeignKey('splits.id'))
 
     player = db.relationship('Player', lazy='joined')
-    # Backrefs: player, split
+    split = db.relationship('Split', lazy='joined')
+    # Backrefs: player
 
 
 #### Events ###########################################################

@@ -45,7 +45,7 @@ def add_time_diffs(players):
     prev = None
 
     for pos, (id, player) in enumerate(players.items(), start=1):
-        if player['time'] and prev:
+        if player['time'] and prev and prev['time']:
             player['time_diff'] = player['time'] - prev['time']
         else:
             player['time_diff'] = None
