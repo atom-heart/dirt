@@ -1,6 +1,7 @@
 from project import db
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-from sqlalchemy import func, and_, case
+from sqlalchemy import func, and_, case, event
+from datetime import timedelta as td
 
 
 #### Games ############################################################
@@ -112,15 +113,16 @@ class Split(db.Model):
     weather = db.relationship('Weather', lazy='joined')
     # Backrefs: stage
 
-    @hybrid_property
-    def times(self):
+    def get_ranking(self):
         return db.session\
             .query(Player.id, Player.name, Time.time, Time.disqualified)\
             .join(Time, Time.player_id == Player.id)\
+            .join(Split, Split.id == Time.split_id)\
             .join(EventPlayer, and_(
-                EventPlayer.player_id == Time.player_id,
+                EventPlayer.player_id == Player.id,
                 EventPlayer.event_id == self.stage.event_id))\
-            .filter(Time.split_id == self.id)\
+            .filter(Split.stage_id == self.stage_id)\
+            .filter(Split.id == self.id)\
             .order_by(
                 case([(Time.time != None, 0),], else_=1),
                 Time.time,
@@ -129,42 +131,32 @@ class Split(db.Model):
             .all()
 
 
-    @hybrid_property
-    def previous(self):
+    def get_progress(self):
+        return db.session\
+            .query(Player.id, Player.name, func.sum(Time.time), StageRanking.disqualified)\
+            .join(Time, Time.player_id == Player.id)\
+            .join(Split, Split.id == Time.split_id)\
+            .join(StageRanking, and_(
+                StageRanking.stage_id == self.stage_id,
+                StageRanking.player_id == Player.id))\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Player.id,
+                EventPlayer.event_id == self.stage.event_id))\
+            .filter(Split.stage_id == self.stage_id)\
+            .filter(Split.order <= self.order)\
+            .group_by(Player.id, StageRanking.disqualified, EventPlayer.player_id, EventPlayer.order)\
+            .order_by(
+                case([(StageRanking.disqualified == True, EventPlayer.order),], else_=0),
+                func.sum(Time.time),
+                EventPlayer.order)\
+            .all()
+
+
+    def get_previous(self):
         return Split.query\
             .filter(Split.stage_id == self.stage_id)\
             .filter(Split.order == self.order - 1)\
             .first()
-
-
-    @hybrid_property
-    def progress_all(self):
-        return db.session\
-            .query(Player.id, Player.name, func.sum(Time.time))\
-            .join(Time, Time.player_id == Player.id)\
-            .join(Split, Split.id == Time.split_id)\
-            .filter(Split.stage_id == self.stage_id)\
-            .filter(Split.order <= self.order)\
-            .group_by(Player.id)\
-            .order_by(func.sum(Time.time))\
-            .all()
-
-
-    @hybrid_property
-    def progress_disq(self):
-        return db.session\
-            .query(Player.id, Player.name, Time.time)\
-            .join(Time, Time.player_id == Player.id)\
-            .join(Split, Split.id == Time.split_id)\
-            .join(EventPlayer, and_(
-                EventPlayer.player_id == Time.player_id,
-                EventPlayer.event_id == self.stage.event_id))\
-            .filter(Time.disqualified == True)\
-            .filter(Split.stage_id == self.stage_id)\
-            .filter(Split.order <= self.order)\
-            .group_by(Player.id, EventPlayer.order, Time.time)\
-            .order_by(EventPlayer.order)\
-            .all()
 
 
 class Time(db.Model):
@@ -179,7 +171,7 @@ class Time(db.Model):
     split_id = db.Column(db.Integer, db.ForeignKey('splits.id'))
 
     player = db.relationship('Player', lazy='joined')
-    split = db.relationship('Split', lazy='joined')
+    split = db.relationship('Split', lazy='joined', backref='times')
     # Backrefs: player
 
 
@@ -205,8 +197,9 @@ class StageRanking(db.Model):
 
     stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'), primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
-    time_total = db.Column(db.Interval, nullable=True)
+    time_total = db.Column(db.Interval, nullable=False, default=td())
     points = db.Column(db.Integer, nullable=True)
+    disqualified = db.Column(db.Boolean, nullable=False, default=False)
 
     # Relationships
     player = db.relationship('Player')
@@ -244,18 +237,6 @@ class Event(db.Model):
     event_players = db.relationship('EventPlayer', backref='event', lazy='dynamic')
     stages = db.relationship('Stage', backref='event', lazy='dynamic')
 
-    @hybrid_property
-    def players(self):
-        """Returns a dictionary of players in format: {order: player}"""
-        players = {}
-        # order_by(EventPlayer.points, EventPlayer.order)
-        for event_player in self.event_players.order_by(EventPlayer.order).all():
-            players[event_player.player_id] = event_player.player
-        return players
-        # return db.session.query(EventPlayer, StageRanking.points).filter(EventPlayer.event_id == self.id)\
-        #     .filter(StageRanking.player_id == 1).all()
-        # return self.event
-
 
 class Stage(db.Model):
     __tablename__ = 'stages'
@@ -264,9 +245,29 @@ class Stage(db.Model):
     order = db.Column(db.Integer, nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
     country_id = db.Column(db.Integer, db.ForeignKey('countries.id'))
+    finished = db.Column(db.Boolean, nullable=False, default=False)
 
     # Relationships
     country = db.relationship('Country')
     splits = db.relationship('Split', backref='stage', lazy='dynamic')
-    stage_rankings = db.relationship('StageRanking', backref='stage', lazy='dynamic')
+    stage_ranking = db.relationship('StageRanking', backref='stage', lazy='dynamic')
     # Backrefs: event
+
+
+    def get_ranking(self):
+        return db.session\
+            .query(
+                Player.id,
+                Player.name,
+                StageRanking.time_total,
+                StageRanking.points,
+                StageRanking.disqualified)\
+            .join(StageRanking, StageRanking.player_id == Player.id)\
+            .join(EventPlayer, EventPlayer.player_id == Player.id)\
+            .filter(StageRanking.stage_id == self.id)\
+            .order_by(
+                case([(StageRanking.disqualified, 1),], else_=0),
+                StageRanking.points.desc(),
+                StageRanking.time_total,
+                EventPlayer.order)\
+            .all()

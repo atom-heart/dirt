@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, jsonify, redirect
 
-from project.models import Split
+from project.models import Split, Stage
 
 from project.api.helpers import get_split_prog, add_positions, add_pos_diffs, add_time_diffs, format_times_diffs, group_players
+from project.api.rankings import get_split_ranking, get_split_progress, get_stage_ranking
 
 
 #### Blueprint config #################################################
@@ -16,46 +17,20 @@ api_blueprint = Blueprint('api', __name__)
 
 @api_blueprint.route('/api/split/<id>')
 def api_split(id):
-    # Get player times form given split
-    _times = Split.query.get(id).times
-
-    # Parse to a dict
-    ranking = {}
-    keys = ('id', 'name', 'time', 'disqualified')
-    for time in _times:
-        ranking[time[0]] = dict(zip(keys, time))
-
-    # Parse even more
-    ranking = add_positions(ranking)
-    ranking = add_time_diffs(ranking)
-    ranking = format_times_diffs(ranking)
-    ranking = group_players(ranking)
-
-    return jsonify(ranking)
+    return jsonify(get_split_ranking(id))
 
 
 @api_blueprint.route('/api/split/progress/<id>')
 def api_split_progress(id):
-    # Get current and previous splits
-    _curr = Split.query.get(id)
-    _prev = _curr.previous
+    return jsonify(get_split_progress(id))
 
-    # No previous split means current one is first in stage
-    if not _prev:
-        return api_split(id)
 
-    # Get progress of current and previous split
-    curr = get_split_prog(_curr)
-    prev = get_split_prog(_prev)
+@api_blueprint.route('/api/stage/<id>')
+def api_stage(id):
+    # Country, info
+    # Stage ranking
+    # For each split:
+        # Split name, weather, order
+        # Split times
 
-    # Determine player positions for both splits in order to calculate position diffs
-    curr = add_positions(curr)
-    prev = add_positions(prev)
-
-    # Determine position diffs, time diffs, format times and group players
-    curr = add_pos_diffs(curr, prev)
-    curr = add_time_diffs(curr)
-    curr = format_times_diffs(curr)
-    curr = group_players(curr)
-
-    return jsonify(curr)
+    return jsonify(get_stage_ranking(id))

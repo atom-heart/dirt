@@ -118,7 +118,7 @@ stages = [
 stage_rankings = [
     StageRanking(time_total=times[0].time + times[2].time + times[4].time, points=5),
     StageRanking(time_total=times[0].time, points=3),
-    StageRanking(),
+    StageRanking(disqualified=True),
     StageRanking(time_total=times[0].time + times[4].time, points=5),
     StageRanking(time_total=times[0].time + times[2].time, points=3),
     StageRanking()
@@ -131,8 +131,8 @@ stage_rankings[3].player = players[0]
 stage_rankings[4].player = players[1]
 stage_rankings[5].player = players[2]
 
-stages[0].stage_rankings.extend(stage_rankings[:3])
-stages[1].stage_rankings.extend(stage_rankings[3:6])
+stages[0].stage_ranking.extend(stage_rankings[:3])
+stages[1].stage_ranking.extend(stage_rankings[3:6])
 
 # Add to database
 db.session.add_all(players)

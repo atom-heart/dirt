@@ -1,17 +1,20 @@
 from datetime import timedelta
 
-def timefilter(td, type='minutes'):
+def timefilter(td, hours=False):
     if not td:
         return None
 
-    hours = td.seconds // 3600
-    minutes = (td.seconds - hours * 3600) // 60
-    seconds = td.seconds - minutes * 60 - hours * 3600
-    milliseconds = td.microseconds // 1000
+    # Determine time intervals
+    h = td.seconds // 3600
+    m = (td.seconds - h * 3600) // 60
+    s = td.seconds - m * 60 - h * 3600
+    ms = td.microseconds // 1000
 
-    result = '{:02d}:{:02d}.{:03d}'.format(minutes, seconds, milliseconds)
+    # Format sconds, minutes and milliseconds
+    time = '{:02d}:{:02d}.{:03d}'.format(m, s, ms)
 
-    if type == 'hours':
-        result = '{:02d}:'.format(hours) + result
+    # Optionally format hours
+    if hours:
+        time = '{:02d}:'.format(h) + result
 
-    return result
+    return time
