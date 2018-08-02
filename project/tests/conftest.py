@@ -14,6 +14,8 @@ def app(request):
     # `TESTING` set to True, `DEBUG` to False,
     # `SQLALCHEMY_DATABASE_URI` leading to testing postgres database
     _app.config.from_pyfile('testing_config.py')
+    # Not using SQLite for testing, because there are problems with
+    # summing timedelta. 
 
     test_client = _app.test_client()
 
@@ -102,4 +104,17 @@ def stage1():
     ]
 
     _db.session.add_all(tables)
+    _db.session.commit()
+
+
+@pytest.fixture(scope='module')
+def stage2():
+    stage2 = Stage(order=2, event_id=1, country_id=1)
+
+    sr1 = StageRanking(player_id=1, stage_id=2)
+    sr2 = StageRanking(player_id=2, stage_id=2)
+    sr3 = StageRanking(player_id=3, stage_id=2)
+    stage2.stage_ranking.extend([sr1, sr2, sr3])
+
+    _db.session.add(stage2)
     _db.session.commit()

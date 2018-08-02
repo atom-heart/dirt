@@ -1,4 +1,4 @@
-from project.models import Split
+from project.models import Split, Stage
 
 from datetime import timedelta as td
 
@@ -103,3 +103,45 @@ def test_split_progress(app, db, game1, event1, stage1):
     assert progress[0][0] == 1
     assert progress[1][0] == 3
     assert progress[2][0] == 2
+
+
+def test_stage_ranking(app, db, game1, event1, stage1):
+    stage = Stage.query.get(1)
+    srs = stage.stage_ranking.all()
+
+    # Proper sorting of disqualified players
+    srs[0].time_total = td(seconds=10)
+    srs[1].time_total = td(seconds=11)
+    srs[2].time_total = td(seconds=12)
+    srs[0].disqualified = True
+    srs[1].disqualified = False
+    srs[2].disqualified = False
+    db.session.add_all(srs)
+    db.session.commit()
+
+    ranking = stage.get_ranking()
+    assert ranking[0][0] == 2
+    assert ranking[1][0] == 3
+    assert ranking[2][0] == 1
+
+
+def test_stage_progress(app, db, game1, event1, stage1, stage2):
+    stage1 = Stage.query.get(1)
+    srs1 = stage1.stage_ranking.all()
+    stage2 = Stage.query.get(2)
+    srs2 = stage2.stage_ranking.all()
+
+    srs1[0].points = 2
+    srs1[1].points = 2
+    srs1[2].points = 2
+
+    srs2[0].points = 1
+    srs2[1].points = 1
+    srs2[2].points = 1
+
+    db.session.add_all(srs1)
+    db.session.add_all(srs2)
+    db.session.commit()
+
+    prog = stage2.get_progress()
+    assert prog[0][3] == prog[1][3] == prog[2][3] == 3

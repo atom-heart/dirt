@@ -30,6 +30,24 @@ def add_positions(ranking):
     return ranking
 
 
+def add_stage_positions(ranking):
+    prev = None
+
+    for pos, player in enumerate(ranking, start=1):
+        if pos is 1:
+            player['position'] = pos
+
+        elif player['points'] == prev['points']:
+            player['position'] = prev['position']
+
+        else:
+            player['position'] = pos
+
+        prev = player
+
+    return ranking
+
+
 def add_pos_diffs(prev, curr):
     """Determines position differences betwen current and previous split progresses"""
     prev_pos = {player['id']: player['position'] for player in prev}
@@ -83,21 +101,15 @@ def group_players(players):
         del player['disqualified']
 
         # Assign to suitable groups
-        if player['time']:
-            grouped['finished'].append(player)
-        elif disq:
+        if disq:
             grouped['disqualified'].append(player)
+        elif player['time']:
+            grouped['finished'].append(player)
         else:
             grouped['not_finished'].append(player)
 
     return grouped
 
 
-def get_split_prog(split):
-    ranking = []
-    keys = ('id', 'name', 'time', 'disqualified')
-
-    for player in split.get_progress():
-        ranking.append(dict(zip(keys, player)))
-
-    return ranking
+def normalize(keys, players):
+    return [dict(zip(keys, player)) for player in players]

@@ -1,17 +1,11 @@
-from project.models import Split, Stage
-from project.api.helpers import get_split_prog, add_positions, add_pos_diffs, add_time_diffs, format_times_diffs, group_players
+from project.models import Split, Stage, Event
+from project.api.helpers import add_positions, add_pos_diffs, add_time_diffs, format_times_diffs, group_players, add_stage_positions, normalize
 
 def get_split_ranking(id):
-    # Get player times for given split
-    _ranking = Split.query.get(id).get_ranking()
-
-    # Parse to a dict
-    ranking = []
+    _split = Split.query.get(id)
     keys = ('id', 'name', 'time', 'disqualified')
-    for player in _ranking:
-        ranking.append(dict(zip(keys, player)))
 
-    # Parse even more
+    ranking = normalize(keys, _split.get_ranking())
     ranking = add_positions(ranking)
     ranking = add_time_diffs(ranking)
     ranking = format_times_diffs(ranking)
@@ -21,38 +15,31 @@ def get_split_ranking(id):
 
 
 def get_split_progress(id):
-    # Get current and previous splits
     _curr = Split.query.get(id)
-    _prev = _curr.get_previous()
+    keys = ('id', 'name', 'time', 'disqualified')
 
-    # No previous split means current one is first in stage
-    if not _prev:
-        return get_split_ranking(id)
+    _prev = _curr if _curr.order == 1 else _curr.get_previous()
 
-    # Get progress of current and previous split
-    curr = get_split_prog(_curr)
-    prev = get_split_prog(_prev)
+    curr = normalize(keys, _curr.get_progress())
+    prev = normalize(keys, _prev.get_progress())
 
-    # Determine player positions for both splits in order to calculate position diffs
     curr = add_positions(curr)
     prev = add_positions(prev)
 
-    # Determine position diffs, time diffs, format times and group players
     curr = add_pos_diffs(curr, prev)
     curr = add_time_diffs(curr)
     curr = format_times_diffs(curr)
     curr = group_players(curr)
+    print(curr)
 
     return curr
 
 
 def get_stage_ranking(id):
-    _ranking = Stage.query.get(id).get_ranking()
-
-    ranking = []
+    _stage = Stage.query.get(id)
     keys = ('id', 'name', 'time', 'points', 'disqualified')
-    for player in _ranking:
-        ranking.append(dict(zip(keys, player)))
+
+    ranking = normalize(keys, _stage.get_ranking())
 
     ranking = add_positions(ranking)
     ranking = add_time_diffs(ranking)
@@ -63,4 +50,29 @@ def get_stage_ranking(id):
 
 
 def get_stage_progress(id):
-    pass
+    _curr = Stage.query.get(id)
+    keys = ('id', 'name', 'time', 'points')
+
+    _prev = _curr if _curr.order == 1 else _curr.get_previous()
+
+    curr = normalize(keys, _curr.get_progress())
+    prev = normalize(keys, _prev.get_progress())
+
+    curr = add_stage_positions(curr)
+    prev = add_stage_positions(prev)
+
+    curr = add_pos_diffs(curr, prev)
+    curr = add_time_diffs(curr)
+    curr = format_times_diffs(curr)
+
+    return curr
+
+
+def get_event_ranking(id):
+    _event = Event.query.get(id)
+    keys = ('id', 'name', 'points', 'car')
+
+    event = normalize(keys, _event.get_ranking())
+    event = add_stage_positions(event)
+
+    return event

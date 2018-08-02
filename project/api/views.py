@@ -1,9 +1,7 @@
 from flask import Blueprint, render_template, jsonify, redirect
 
 from project.models import Split, Stage
-
-from project.api.helpers import get_split_prog, add_positions, add_pos_diffs, add_time_diffs, format_times_diffs, group_players
-from project.api.rankings import get_split_ranking, get_split_progress, get_stage_ranking
+from project.api.rankings import get_split_ranking, get_split_progress, get_stage_ranking, get_stage_progress, get_event_ranking
 
 
 #### Blueprint config #################################################
@@ -32,5 +30,14 @@ def api_stage(id):
     # For each split:
         # Split name, weather, order
         # Split times
-
     return jsonify(get_stage_ranking(id))
+
+
+@api_blueprint.route('/api/stage/progress/<id>')
+def api_stage_progress(id):
+    return jsonify(get_stage_progress(id))
+
+
+@api_blueprint.route('/api/event/<id>')
+def api_event(id):
+    return jsonify(get_event_ranking(id))

@@ -187,6 +187,7 @@ class EventPlayer(db.Model):
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
     order = db.Column(db.Integer, nullable=False)
     car_id = db.Column(db.Integer, db.ForeignKey('cars.id'))
+    points = db.Column(db.Integer, nullable=False, default=0)
 
     # Relationships
     car = db.relationship('Car')
@@ -198,7 +199,7 @@ class StageRanking(db.Model):
     stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'), primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
     time_total = db.Column(db.Interval, nullable=False, default=td())
-    points = db.Column(db.Integer, nullable=True)
+    points = db.Column(db.Integer, nullable=False, default=0)
     disqualified = db.Column(db.Boolean, nullable=False, default=False)
 
     # Relationships
@@ -238,6 +239,23 @@ class Event(db.Model):
     stages = db.relationship('Stage', backref='event', lazy='dynamic')
 
 
+    def get_ranking(self):
+        return db.session\
+            .query(
+                Player.id,
+                Player.name,
+                EventPlayer.points,
+                Car.name)\
+            .join(EventPlayer, and_(
+                EventPlayer.event_id == self.id,
+                EventPlayer.player_id == Player.id))\
+            .join(Car, Car.id == EventPlayer.car_id)\
+            .order_by(
+                EventPlayer.points,
+                EventPlayer.order)\
+            .all()
+
+
 class Stage(db.Model):
     __tablename__ = 'stages'
 
@@ -271,3 +289,33 @@ class Stage(db.Model):
                 StageRanking.time_total,
                 EventPlayer.order)\
             .all()
+
+
+    def get_progress(self):
+        return db.session\
+            .query(
+                Player.id,
+                Player.name,
+                func.sum(StageRanking.time_total),
+                func.sum(StageRanking.points))\
+            .join(Stage, Stage.event_id == self.event_id)\
+            .join(StageRanking, and_(
+                StageRanking.player_id == Player.id,
+                StageRanking.stage_id == Stage.id))\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Player.id,
+                EventPlayer.event_id == self.event_id))\
+            .filter(Stage.order <= self.order)\
+            .group_by(Player.id, Player.name, EventPlayer.order)\
+            .order_by(
+                func.sum(StageRanking.points).desc(),
+                func.sum(StageRanking.time_total),
+                EventPlayer.order)\
+            .all()
+
+
+    def get_previous(self):
+        return Stage.query\
+            .filter(Stage.event_id == self.event_id)\
+            .filter(Stage.order == self.order - 1)\
+            .first()
