@@ -13,6 +13,11 @@ api_blueprint = Blueprint('api', __name__)
 #### Routes ###########################################################
 #######################################################################
 
+@api_blueprint.route('/')
+def index():
+    return render_template('index.html')
+
+
 @api_blueprint.route('/api/split/<id>')
 def api_split(id):
     return jsonify(get_split_ranking(id))
@@ -25,11 +30,6 @@ def api_split_progress(id):
 
 @api_blueprint.route('/api/stage/<id>')
 def api_stage(id):
-    # Country, info
-    # Stage ranking
-    # For each split:
-        # Split name, weather, order
-        # Split times
     return jsonify(get_stage_ranking(id))
 
 
