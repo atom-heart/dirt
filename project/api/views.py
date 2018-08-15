@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, jsonify, redirect
 
-from project.models import Split, Stage
+from project.models import Split, Stage, Event
 from project.api.rankings import get_split_ranking, get_split_progress, get_stage_ranking, get_stage_progress, get_event_ranking
+from project.api.helpers import normalize
 
 
 #### Blueprint config #################################################
@@ -13,9 +14,17 @@ api_blueprint = Blueprint('api', __name__)
 #### Routes ###########################################################
 #######################################################################
 
+
 @api_blueprint.route('/')
 def index():
     return render_template('index.html')
+
+
+@api_blueprint.route('/api/event/info/<id>')
+def event(id):
+    event = Event.query.get(id)
+    stages = normalize(('id', 'country', 'finished', 'order'), event.get_stages());
+    return jsonify(stages)
 
 
 @api_blueprint.route('/api/split/<id>')

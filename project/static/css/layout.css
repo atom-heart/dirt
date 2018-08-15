@@ -1,0 +1,205 @@
+html,
+body {
+  height: 100%;
+}
+
+a {
+  cursor: pointer
+}
+
+.container {
+  max-width: 900px;
+  margin-top: 20px;
+}
+
+/*
+*
+* Main nav
+*
+*/
+.main-nav {
+  margin-bottom: 10px;
+}
+
+.helper-container {
+  padding-left: 20px;
+  width: 100%;
+}
+
+
+/*
+*
+* Sidebar
+*
+*/
+
+#sidebar {
+  /* Make it sticky */
+  min-width: 250px;
+}
+
+/* Sidebar links */
+#sidebar a {
+  color: #6c757d;
+}
+
+#sidebar a:hover {
+  color: #222;
+}
+
+#sidebar a.active {
+  color: #fff;
+}
+
+/* Sidebar title */
+#sidebar h2 {
+  padding: 25px 20px;
+  border-bottom: 1px solid #e6e6e6;
+  line-height: 1;
+  width: calc(100% - 30px);
+  margin: 0 15px;
+  /* margin-bottom: 15px; */
+}
+
+/* Top-level sidebar menu */
+#sidebar .top-level-menu {
+  padding: 15px 0;
+  margin: 0 15px;
+
+  border-bottom: 1px solid #e6e6e6;
+}
+
+#sidebar .nav-link {
+  padding-left: 20px;
+}
+
+/* Sidebar submenu */
+#sidebar .sub-menu {
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+
+
+/*
+*
+* Main section
+*
+*/
+#main {
+  margin: 20px 0;
+}
+
+#main .card,
+#main .alert {
+  margin: 40px 0;
+}
+
+#main .card:first-child {
+  margin-top: 0;
+}
+
+#main .alert:last-child {
+  margin-bottom: 0;
+}
+
+#main hr {
+  margin: -15px 0;
+}
+
+#main .card-header {
+  background: inherit;
+  border-width: 0px;
+  border-color: #e6e6e6;
+  padding: 20px;
+  padding-bottom: 15px;
+}
+
+#main .card-header h4 {
+  margin-bottom: 5px;
+  font-size: 1.25em;
+}
+
+#main .card-body {
+  /* padding-top: 10px; */
+  /* padding-bottom: 10px; */
+}
+
+#main .card-footer {
+  background: inherit;
+  padding: 0;
+}
+
+#main .card-footer .btn {
+  background: transparent;
+  width: 100%;
+  padding: 17px 0;
+  text-decoration: none;
+}
+
+#main h4 {
+  /* font-size: */
+}
+
+/*
+*
+* Tables
+*
+*/
+.table {
+  margin: 0;
+  border-top: 1px solid #e6e6e6;
+  padding: 48px 0;
+}
+
+.interactive-table tbody tr:hover {
+  background: #fafafa;
+  cursor: pointer;
+}
+
+.table thead tr th {
+  border-top: none;
+  /* background: #fafafa; */
+}
+
+.table tr td, .table tr th {
+  border-width: 1px;
+  border-color: #e6e6e6;
+  font-weight: normal;
+}
+
+.weather {
+  font-size: 1.2em;
+}
+
+.finish-alert {
+  height: 60px;
+  background: #fff;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.finish-alert .container {
+  height: 100%;
+}
+
+
+.dimmer {
+  /* background: #fafafa; */
+}
+
+.time-input {
+  max-width: 42px;
+  margin-right: 10px;
+}
+
+.time-input-3 {
+  max-width: 52px;
+  margin-right: 10px;
+}
+
+.split-modal {
+  max-width: 350px;
+}

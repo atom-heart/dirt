@@ -256,6 +256,19 @@ class Event(db.Model):
             .all()
 
 
+    def get_stages(self):
+        return db.session\
+            .query(
+                Stage.id,
+                Country.name,
+                Stage.finished,
+                Stage.order)\
+            .join(Country, Country.id == Stage.country_id)\
+            .filter(Stage.event_id == self.id)\
+            .order_by(Stage.order)\
+            .all()
+
+
 class Stage(db.Model):
     __tablename__ = 'stages'
 

@@ -1,18 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import '../css/layout.css';
 
-import { Jumbotron } from 'reactstrap';
+import Event from './components/Event';
+import store from './store.js';
 
-class App extends React.Component {
-  render() {
-    return (
-      <Jumbotron>
-        <h1>Hello!</h1>
-      </Jumbotron>
-    );
-  }
-}
-
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  (<Provider store={store}>
+    <Event />
+  </Provider>),
+  document.getElementById('root')
+);
