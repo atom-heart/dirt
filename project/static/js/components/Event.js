@@ -1,30 +1,42 @@
 import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { Route } from 'react-router-dom';
 
 import { fetchEventData, isLoading } from '../actions/event-actions.js';
 
 import Sidebar from './Sidebar';
 import NavSection from './NavSection';
 import PageLoader from './PageLoader';
+import EventInfo from './EventInfo';
+import Stage from './Stage';
 
-import { Container, Row, Button } from 'reactstrap';
+import { Row, Button } from 'reactstrap';
 
 class Event extends React.Component {
+  constructor(props) {
+    super(props);
+    this.eventId = this.props.match.params.id;
+  }
+
   componentDidMount() {
-    this.props.fetchEventData();
+    this.props.fetchEventData(this.eventId);
   }
 
   render() {
     if (this.props.isLoading) {
-      return <PageLoader />
+      return <PageLoader />;
     } else {
       return (
-        <Container>
+        <div>
           <Row>
-            <Sidebar />
+            <Sidebar eventId={this.eventId} eventName={this.props.name} className="col-4" />
+          <div className="col" id="main">
+              <Route path={`/event/${this.eventId}`} exact component={EventInfo} />
+              <Route path={`/event/${this.eventId}/:stage`} exact component={Stage} />
+            </div>
           </Row>
-        </Container>
+        </div>
       );
     }
   }

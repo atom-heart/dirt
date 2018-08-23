@@ -4,9 +4,8 @@ import {
 } from '../actions/event-actions.js';
 
 const initalState = {
-  isLoading: false,
+  isLoading: true,
   error: false,
-  id: 1,
   stages: [],
 }
 
@@ -15,7 +14,7 @@ export const eventReducer = (state = initalState, action) => {
     case IS_LOADING:
       return Object.assign({}, state, {isLoading: true})
     case MOUNT_INITIAL_DATA:
-      return Object.assign({}, state, {stages: action.payload, isLoading: false});
+      return Object.assign({}, state, action.payload, {isLoading: false});
     default:
       return state;
   };

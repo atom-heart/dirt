@@ -14,17 +14,30 @@ api_blueprint = Blueprint('api', __name__)
 #### Routes ###########################################################
 #######################################################################
 
-
-@api_blueprint.route('/')
-def index():
+# http://flask.pocoo.org/snippets/57/
+@api_blueprint.route('/', defaults={'path': ''})
+@api_blueprint.route('/<path:path>')
+def index(path):
     return render_template('index.html')
 
 
 @api_blueprint.route('/api/event/info/<id>')
 def event(id):
     event = Event.query.get(id)
+
+    game = {'id': event.game.id, 'name': event.game.name}
     stages = normalize(('id', 'country', 'finished', 'order'), event.get_stages());
-    return jsonify(stages)
+    car_classes = normalize(('id', 'name'), event.get_car_classes())
+    players = normalize(('id', 'name', 'points', 'car_id', 'car_name'), event.get_players())
+
+    return jsonify({
+        'id': event.id,
+        'name': event.name,
+        'game': game,
+        'players': players,
+        'carClasses': car_classes,
+        'stages': stages
+    })
 
 
 @api_blueprint.route('/api/split/<id>')

@@ -1,3 +1,5 @@
+import { BASE_URL } from '../config';
+
 export const MOUNT_INITIAL_DATA = 'event:mountInitialData';
 export const IS_LOADING = 'event:isLoading';
 
@@ -10,11 +12,11 @@ export const mountInitialData = payload => ({
   payload
 });
 
-export const fetchEventData = () => {
+export const fetchEventData = (id) => {
   return dispatch => {
     dispatch(isLoading());
-    
-    fetch(`${window.location.href}api/event/info/1`)
+
+    fetch(`${BASE_URL}api/event/info/${id}`)
       .then(res => res.json())
       .then(
         (result) => {
