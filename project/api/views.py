@@ -15,8 +15,8 @@ api_blueprint = Blueprint('api', __name__)
 #######################################################################
 
 # http://flask.pocoo.org/snippets/57/
-@api_blueprint.route('/', defaults={'path': ''})
-@api_blueprint.route('/<path:path>')
+@api_blueprint.route('/event', defaults={'path': ''})
+@api_blueprint.route('/event/<path:path>')
 def index(path):
     return render_template('index.html')
 

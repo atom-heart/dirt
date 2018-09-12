@@ -9,7 +9,7 @@ class Sidebar extends React.Component {
     let stages = this.props.stages.map((stage) => (
       <li className="nav-item" key={stage.id}>
         <NavLink
-          to={`/event/${this.props.eventId}/${stage.country.toLowerCase()}`}
+          to={`/event/${this.props.eventId}/${stage.id}`}
           className="nav-link"
         >
           {stage.country}

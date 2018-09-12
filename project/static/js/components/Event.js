@@ -30,10 +30,18 @@ class Event extends React.Component {
       return (
         <div>
           <Row>
-            <Sidebar eventId={this.eventId} eventName={this.props.name} className="col-4" />
-          <div className="col" id="main">
+            <Sidebar
+              eventId={this.eventId}
+              eventName={this.props.name}
+              className="col-4"
+            />
+            <div className="col" id="main">
               <Route path={`/event/${this.eventId}`} exact component={EventInfo} />
-              <Route path={`/event/${this.eventId}/:stage`} exact component={Stage} />
+              <Route
+                exact
+                path={`/event/${this.eventId}/:stageId`}
+                component={Stage}
+              />
             </div>
           </Row>
         </div>
@@ -42,7 +50,7 @@ class Event extends React.Component {
   }
 }
 
-const mapStateToProps = state => state.event
+const mapStateToProps = state => state.event;
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
