@@ -2,8 +2,10 @@ import { BASE_URL } from '../config';
 
 export const MOUNT_EVENT_DATA = 'event:mountEventData';
 export const IS_LOADING_EVENT = 'event:isLoadingEvent';
-export const IS_LOADING_STAGE = 'event:isLOadingStage';
+export const IS_LOADING_STAGE = 'event:isLoadingStage';
 export const MOUNT_STAGE_DATA = 'event:mountStageData';
+export const THROW_EVENT_ERROR = 'event:throwEventError';
+export const THROW_STAGE_ERROR = 'event:throwStageError';
 
 export const isLoadingEvent = () => ({
   type: IS_LOADING_EVENT
@@ -14,10 +16,13 @@ export const mountEventData = payload => ({
   payload
 });
 
+export const throwEventError = error => ({
+  type: THROW_EVENT_ERROR,
+  error
+});
+
 export const fetchEventData = id => {
   return dispatch => {
-    dispatch(isLoadingEvent());
-
     fetch(`${BASE_URL}api/event/info/${id}`)
       .then(res => res.json())
       .then(
@@ -25,36 +30,52 @@ export const fetchEventData = id => {
           dispatch(mountEventData(result));
         },
         (error) => {
-          console.log('Error fetching event data!');
+          dispatch(throwEventError(error));
         }
       )
   }
 }
 
-export const isLoadingStage = id => ({
+export const reloadEvent = () => {
+  return dispatch => {
+    dispatch(isLoadingEvent());
+  }
+}
+
+export const isLoadingStage = stageId => ({
   type: IS_LOADING_STAGE,
-  id
+  stageId
+});
+
+export const throwStageError = (stageId, error) => ({
+  type: THROW_STAGE_ERROR,
+  stageId,
+  error
 })
 
-export const mountStageData = (id, payload) => ({
+export const mountStageData = (stageId, payload) => ({
   type: MOUNT_STAGE_DATA,
-  stageId: id,
+  stageId,
   payload
 })
 
 export const fetchStage = id => {
   return dispatch => {
-    dispatch(isLoadingStage(id));
-
-    fetch(`${BASE_URL}api/stage/${id}`)
+    fetch(`${BASE_URL}api/stage/test/${id}`)
       .then(res => res.json())
       .then(
         (result) => {
           dispatch(mountStageData(id, result));
         },
         (error) => {
-          console.log('Error fetching event data!');
+          dispatch(throwStageError(id, error));
         }
-      )
+      );
+  }
+}
+
+export const reloadStage = id => {
+  return dispatch => {
+    dispatch(isLoadingStage(id));
   }
 }

@@ -238,15 +238,6 @@ class Event(db.Model):
     event_players = db.relationship('EventPlayer', backref='event', lazy='dynamic')
     stages = db.relationship('Stage', backref='event', lazy='dynamic')
 
-    def get_players(self):
-        return db.session\
-            .query(
-                Player.id,
-                Player.name,
-                Car.id,
-                Car.name)\
-
-
     def get_car_classes(self):
         return [[cc.id, cc.name] for cc in self.car_classes]
 
@@ -256,6 +247,7 @@ class Event(db.Model):
             .query(
                 Player.id,
                 Player.name,
+                EventPlayer.order,
                 EventPlayer.points,
                 Car.id,
                 Car.name)\

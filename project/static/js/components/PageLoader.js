@@ -10,7 +10,7 @@ const styles = {
   justifyContent: 'center'
 }
 
-const PageLoader = () => {
+const PageLoader = (props) => {
   return <div style={styles}>Loading...</div>
 }
 

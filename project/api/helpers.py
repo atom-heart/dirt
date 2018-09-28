@@ -91,7 +91,7 @@ def group_players(players):
             `disqualified` (bool) property
 
     returns:
-        ranking: dict of lists (groups) of players
+        grouped: dict of lists (groups) of players
     """
     grouped = {'finished': [], 'disqualified': [], 'not_finished': []}
 
