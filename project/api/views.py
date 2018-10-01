@@ -78,11 +78,10 @@ def api_stage_test(id):
 
         splits.append(split)
 
-    # abort(404)
-
+    # TODO shoud hide progress behind if
     return jsonify({
         'ranking': get_stage_ranking(id),
-        'progress': get_stage_progress(id) if _stage.finished else [],
+        'progress': get_stage_progress(id),
         'splits': splits
     })
 

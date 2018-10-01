@@ -30,7 +30,7 @@ class Event extends React.Component {
   }
 
   componentDidUpdate() {
-    if (!(this.props.loaded || this.props.error)) {
+    if (!this.props.loaded && !this.props.error) {
       this.props.fetchEventData(this.eventId);
     }
   }
@@ -47,23 +47,21 @@ class Event extends React.Component {
 
     else {
       return (
-        <div>
-          <Row>
-            <Sidebar
-              eventId={this.eventId}
-              eventName={this.props.name}
-              className="col-4"
+        <Row>
+          <Sidebar
+            eventId={this.eventId}
+            eventName={this.props.name}
+            className="col-4"
+          />
+          <div className="col" id="main">
+            <Route path={`/event/${this.eventId}`} exact component={EventInfo} />
+            <Route
+              exact
+              path={`/event/${this.eventId}/:stageId`}
+              component={Stage}
             />
-            <div className="col" id="main">
-              <Route path={`/event/${this.eventId}`} exact component={EventInfo} />
-              <Route
-                exact
-                path={`/event/${this.eventId}/:stageId`}
-                component={Stage}
-              />
-            </div>
-          </Row>
-        </div>
+          </div>
+        </Row>
       );
     }
 

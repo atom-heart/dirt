@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SplitRanking = props => {
+const SplitProgress = props => {
   let ranking = [];
 
   props.ranking.finished.forEach(player => {
@@ -8,6 +8,7 @@ const SplitRanking = props => {
       <tr key={player.id}>
         <td>{player.position}</td>
         <td>{player.name}</td>
+        <td>{player.position_diff}</td>
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
       </tr>
@@ -19,30 +20,18 @@ const SplitRanking = props => {
       <tr key={player.id}>
         <td>{player.position}</td>
         <td>{player.name}</td>
+        <td>{player.position_diff}</td>
         <td colSpan="2">disqualified</td>
       </tr>
     );
   });
 
-  props.ranking.not_finished.forEach(player => {
-    ranking.push(
-      <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.name}</td>
-        <td colSpan="2"></td>
-      </tr>
-    );
-  });
-
-  // don't ask, temporary
-  ranking.pop();
-
   return (
-    <table className="table interactive-table">
+    <table className="table">
       <thead>
         <tr>
           <th className="pos" scope="col">Pos.</th>
-          <th scope="col">Name</th>
+          <th scope="col" colSpan="2">Name</th>
           <th scope="col">Time</th>
           <th scope="col">Diff.</th>
         </tr>
@@ -54,4 +43,4 @@ const SplitRanking = props => {
   );
 }
 
-export default SplitRanking;
+export default SplitProgress;

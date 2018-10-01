@@ -1,26 +1,17 @@
 import React from 'react';
 
-const StageRanking = props => {
+const StageProgress = props => {
   let ranking = [];
 
-  props.ranking.finished.forEach(player => {
+  props.ranking.forEach(player => {
     ranking.push(
       <tr key={player.id}>
         <td>{player.position}</td>
         <td>{player.name}</td>
+        <td>{player.position_diff}</td>
         <td>{player.points}</td>
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
-      </tr>
-    )
-  });
-
-  props.ranking.disqualified.forEach(player => {
-    ranking.push(
-      <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.name}</td>
-        <td colSpan="3">disqualified</td>
       </tr>
     )
   });
@@ -30,7 +21,7 @@ const StageRanking = props => {
       <thead>
         <tr>
           <th className="pos" scope="col">Pos.</th>
-          <th scope="col">Name</th>
+          <th scope="col" colSpan="2">Name</th>
           <th scope="col">Pts.</th>
           <th scope="col">Time</th>
           <th scope="col">Diff.</th>
@@ -43,4 +34,4 @@ const StageRanking = props => {
   );
 }
 
-export default StageRanking;
+export default StageProgress;
