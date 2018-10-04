@@ -20,7 +20,8 @@ const StageRanking = props => {
       <tr key={player.id}>
         <td>{player.position}</td>
         <td>{player.name}</td>
-        <td colSpan="3">disqualified</td>
+        <td>{player.points}</td>
+        <td colSpan="2">disqualified</td>
       </tr>
     )
   });

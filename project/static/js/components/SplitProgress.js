@@ -7,8 +7,8 @@ const SplitProgress = props => {
     ranking.push(
       <tr key={player.id}>
         <td>{player.position}</td>
-        <td>{player.name}</td>
         <td>{player.position_diff}</td>
+        <td>{player.name}</td>
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
       </tr>
@@ -19,8 +19,8 @@ const SplitProgress = props => {
     ranking.push(
       <tr key={player.id}>
         <td>{player.position}</td>
-        <td>{player.name}</td>
         <td>{player.position_diff}</td>
+        <td>{player.name}</td>
         <td colSpan="2">disqualified</td>
       </tr>
     );
@@ -31,7 +31,8 @@ const SplitProgress = props => {
       <thead>
         <tr>
           <th className="pos" scope="col">Pos.</th>
-          <th scope="col" colSpan="2">Name</th>
+          <th scope="col">Diff.</th>
+          <th scope="col">Name</th>
           <th scope="col">Time</th>
           <th scope="col">Diff.</th>
         </tr>

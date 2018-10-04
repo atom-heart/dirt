@@ -102,6 +102,7 @@ class Split(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order = db.Column(db.Integer, nullable=True)
     finished = db.Column(db.Boolean, default=False, nullable=False)
+    turns = db.Column(db.Integer, nullable=False)
 
     # Foreign keys
     track_id = db.Column(db.Integer, db.ForeignKey('tracks.id'))
@@ -113,40 +114,53 @@ class Split(db.Model):
     weather = db.relationship('Weather', lazy='joined')
     # Backrefs: stage
 
+
     def get_ranking(self):
         return db.session\
-            .query(Player.id, Player.name, Time.time, Time.disqualified)\
+            .query(
+                Player.id,
+                Player.name,
+                Time.time,
+                Time.disqualified,
+                StageRanking.disqualified)\
             .join(Time, Time.player_id == Player.id)\
             .join(Split, Split.id == Time.split_id)\
             .join(EventPlayer, and_(
                 EventPlayer.player_id == Player.id,
                 EventPlayer.event_id == self.stage.event_id))\
+            .join(StageRanking, and_(
+                StageRanking.player_id == Player.id,
+                StageRanking.stage_id == self.stage_id))\
             .filter(Split.stage_id == self.stage_id)\
             .filter(Split.id == self.id)\
             .order_by(
                 case([(Time.time != None, 0),], else_=1),
                 Time.time,
-                case([(Time.disqualified != None, 0),], else_=1),
+                case(
+                    [(Time.disqualified == True, 1),
+                    (StageRanking.disqualified == True, 2)],
+                    else_=0),
                 EventPlayer.order)\
             .all()
 
 
     def get_progress(self):
         return db.session\
-            .query(Player.id, Player.name, func.sum(Time.time), StageRanking.disqualified)\
+            .query(
+                Player.id,
+                Player.name,
+                func.sum(Time.time),
+                case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False))\
             .join(Time, Time.player_id == Player.id)\
             .join(Split, Split.id == Time.split_id)\
-            .join(StageRanking, and_(
-                StageRanking.stage_id == self.stage_id,
-                StageRanking.player_id == Player.id))\
             .join(EventPlayer, and_(
                 EventPlayer.player_id == Player.id,
                 EventPlayer.event_id == self.stage.event_id))\
             .filter(Split.stage_id == self.stage_id)\
             .filter(Split.order <= self.order)\
-            .group_by(Player.id, StageRanking.disqualified, EventPlayer.player_id, EventPlayer.order)\
+            .group_by(Player.id, EventPlayer.player_id, EventPlayer.order)\
             .order_by(
-                case([(StageRanking.disqualified == True, EventPlayer.order),], else_=0),
+                case([(case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False) == True, 1),], else_=0),
                 func.sum(Time.time),
                 EventPlayer.order)\
             .all()
@@ -157,6 +171,20 @@ class Split(db.Model):
             .filter(Split.stage_id == self.stage_id)\
             .filter(Split.order == self.order - 1)\
             .first()
+
+    # to be amended probably
+    def should_finish(self):
+        stage_disq = db.session\
+            .query(func.count(StageRanking.player_id))\
+            .filter(StageRanking.stage_id == self.stage_id)\
+            .filter(StageRanking.disqualified)\
+            .first()[0]
+        split_disq = db.session\
+            .query(func.count(Time.player_id))\
+            .filter(Time.split_id == self.id)\
+            .filter(Time.disqualified)\
+            .first()[0]
+        return self.turns - stage_disq + split_disq < 1
 
 
 class Time(db.Model):
@@ -238,6 +266,7 @@ class Event(db.Model):
     event_players = db.relationship('EventPlayer', backref='event', lazy='dynamic')
     stages = db.relationship('Stage', backref='event', lazy='dynamic')
 
+
     def get_car_classes(self):
         return [[cc.id, cc.name] for cc in self.car_classes]
 
@@ -282,6 +311,7 @@ class Stage(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
     country_id = db.Column(db.Integer, db.ForeignKey('countries.id'))
     finished = db.Column(db.Boolean, nullable=False, default=False)
+    total_splits = db.Column(db.Integer, nullable=False)
 
     # Relationships
     country = db.relationship('Country')
@@ -295,26 +325,35 @@ class Stage(db.Model):
             .query(
                 Player.id,
                 Player.name,
-                StageRanking.time_total,
+                func.sum(Time.time),
                 StageRanking.points,
                 StageRanking.disqualified)\
-            .join(StageRanking, StageRanking.player_id == Player.id)\
+            .join(StageRanking, and_(
+                StageRanking.player_id == Player.id,
+                StageRanking.stage_id == self.id))\
             .join(EventPlayer, EventPlayer.player_id == Player.id)\
-            .filter(StageRanking.stage_id == self.id)\
+            .join(Split, Split.stage_id == self.id)\
+            .join(Time, and_(
+                Time.split_id == Split.id,
+                Time.player_id == Player.id))\
+            .group_by(
+                Player.id,
+                Player.name,
+                StageRanking.points,
+                StageRanking.disqualified,
+                EventPlayer.order)\
             .order_by(
                 case([(StageRanking.disqualified, 1),], else_=0),
                 StageRanking.points.desc(),
-                StageRanking.time_total,
+                func.sum(Time.time),
                 EventPlayer.order)\
             .all()
 
 
     def get_progress(self):
-        return db.session\
-            .query(
+        return db.session.query(
                 Player.id,
                 Player.name,
-                func.sum(StageRanking.time_total),
                 func.sum(StageRanking.points))\
             .join(Stage, Stage.event_id == self.event_id)\
             .join(StageRanking, and_(
@@ -327,7 +366,6 @@ class Stage(db.Model):
             .group_by(Player.id, Player.name, EventPlayer.order)\
             .order_by(
                 func.sum(StageRanking.points).desc(),
-                func.sum(StageRanking.time_total),
                 EventPlayer.order)\
             .all()
 
@@ -337,3 +375,10 @@ class Stage(db.Model):
             .filter(Stage.event_id == self.event_id)\
             .filter(Stage.order == self.order - 1)\
             .first()
+
+
+    def should_finish(self):
+        return db.session.query(func.count(Split.id))\
+            .filter(Split.stage_id == self.id)\
+            .filter(Split.finished.isnot(True))\
+            .first()[0] == 0

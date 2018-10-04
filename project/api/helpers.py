@@ -61,11 +61,11 @@ def add_pos_diffs(prev, curr):
 
 def add_time_diffs(ranking):
     """Determines time differences"""
-    prev = None
+    first = ranking[0]
 
     for player in ranking:
-        if player['time'] and prev and prev['time']:
-            player['time_diff'] = player['time'] - prev['time']
+        if player['time'] and player is not first:
+            player['time_diff'] = player['time'] - first['time']
         else:
             player['time_diff'] = None
         prev = player
@@ -111,5 +111,62 @@ def group_players(players):
     return grouped
 
 
+def group_players_ranking(players):
+    """
+    Divides players into groups: `finished`, `disqualified` and, optionally, `not_finished`.
+
+    args:
+        players: dict of players, with their ID as the key, containing (among others)
+            `disqualified` (bool) property
+
+    returns:
+        grouped: dict of lists (groups) of players
+    """
+    grouped = {'finished': [], 'disqualified': [], 'not_finished': [], 'stage_disqualified': []}
+
+    for player in players:
+        # Save `disqualified` property to temporary variable, and delete from player dict
+        disq = player['disqualified']
+        stage_disq = player['stage_disqualified']
+        del player['disqualified']
+        del player['stage_disqualified']
+
+        # Assign to suitable groups
+        if player['time']:
+            grouped['finished'].append(player)
+        elif disq:
+            grouped['disqualified'].append(player)
+        elif stage_disq:
+            grouped['stage_disqualified'].append(player)
+        else:
+            grouped['not_finished'].append(player)
+
+    return grouped
+
+
 def normalize(keys, players):
     return [dict(zip(keys, player)) for player in players]
+
+
+def strToTimedelta(datestring):
+    """Converts JavaScript datetime string to Python timedelta"""
+    dt = datetime.datetime.strptime(datestring, '%Y-%m-%dT%H:%M:%S.%fZ')
+    td = datetime.timedelta(
+        hours=dt.hour,
+        minutes=dt.minute,
+        seconds=dt.second,
+        microseconds=dt.microsecond
+    )
+
+    return td
+
+
+def assign_points(players):
+    # temp point system which works only works for 4 or less players
+    points = [5, 3, 1, 0]
+
+    result = {}
+    for player in players:
+        result[player['id']] = 0 if player['disqualified'] else points[player['position'] - 1]
+
+    return result

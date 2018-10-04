@@ -66,29 +66,25 @@ cars = [
 
 # Create splits
 splits = [
-    Split(track=tracks[0], weather=weather[0], order=1, finished=True),
-    Split(track=tracks[3], weather=weather[1], order=2),
-    Split(track=tracks[1], weather=weather[3], order=1),
+    Split(track=tracks[0], weather=weather[0], order=1, turns=4),
+    Split(track=tracks[3], weather=weather[1], order=2, turns=4),
+    Split(track=tracks[1], weather=weather[3], order=1, turns=4),
 ]
 
 # Create times
 times = [
-    Time(time=td(minutes=3, seconds=56, microseconds=560000), player=players[0],
-         split=splits[0]),
-    Time(time=td(minutes=4, seconds=44, microseconds=380000), player=players[1], split=splits[0]),
-    Time(time=td(minutes=3, seconds=45, microseconds=333000), player=players[0],
-         split=splits[1]),
-    Time(player=players[1],
-         split=splits[1], disqualified=True),
-    Time(time=td(minutes=6, seconds=45, microseconds=730000), player=players[0],
-         split=splits[2]),
-    Time(time=td(minutes=6, seconds=33, microseconds=900000), player=players[1],
-         split=splits[2]),
-    Time(time=td(minutes=3, seconds=45, microseconds=333000), player=players[2], split=splits[0]),
-    Time(time=td(minutes=4, seconds=45, microseconds=138000), player=players[2], split=splits[1]),
+    Time(player=players[0], split=splits[0]),
+    Time(player=players[1], split=splits[0]),
+    Time(player=players[0], split=splits[1]),
+    Time(player=players[1], split=splits[1]),
+    Time(player=players[0], split=splits[2]),
+    Time(player=players[1], split=splits[2]),
+    Time(player=players[2], split=splits[0]),
+    Time(player=players[2], split=splits[1]),
     Time(player=players[2], split=splits[2]),
     Time(player=players[3], split=splits[1]),
-    Time(time=td(minutes=5, seconds=42, microseconds=123000), player=players[3], split=splits[0]),
+    Time(player=players[3], split=splits[0]),
+    Time(player=players[3], split=splits[2]),
 ]
 
 # Create event
@@ -110,29 +106,33 @@ event.event_players.extend(event_players)
 
 # Create stages
 stages = [
-    Stage(order=1, event=event, country=countries[0], splits=splits[:2]),
-    Stage(order=2, event=event, country=countries[1], splits=splits[2:3])
+    Stage(order=1, event=event, country=countries[0], splits=splits[:2], total_splits=2),
+    Stage(order=2, event=event, country=countries[1], splits=splits[2:3], total_splits=1)
 ]
 
 # Create stage ranking
 stage_rankings = [
-    StageRanking(time_total=times[0].time + times[2].time + times[4].time, points=5),
-    StageRanking(time_total=times[0].time, points=3),
-    StageRanking(disqualified=True),
-    StageRanking(time_total=times[0].time + times[4].time, points=5),
-    StageRanking(time_total=times[0].time + times[2].time, points=3),
+    StageRanking(),
+    StageRanking(),
+    StageRanking(),
+    StageRanking(),
+    StageRanking(),
+    StageRanking(),
+    StageRanking(),
     StageRanking()
 ]
 
 stage_rankings[0].player = players[0]
 stage_rankings[1].player = players[1]
 stage_rankings[2].player = players[2]
-stage_rankings[3].player = players[0]
-stage_rankings[4].player = players[1]
-stage_rankings[5].player = players[2]
+stage_rankings[3].player = players[3]
+stage_rankings[4].player = players[0]
+stage_rankings[5].player = players[1]
+stage_rankings[6].player = players[2]
+stage_rankings[7].player = players[3]
 
-stages[0].stage_ranking.extend(stage_rankings[:3])
-stages[1].stage_ranking.extend(stage_rankings[3:6])
+stages[0].stage_ranking.extend(stage_rankings[:4])
+stages[1].stage_ranking.extend(stage_rankings[4:8])
 
 # Add to database
 db.session.add_all(players)

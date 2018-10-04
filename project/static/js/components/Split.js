@@ -11,7 +11,7 @@ class Split extends React.Component {
   constructor(props) {
     super(props);
     this.state = { showProgress: false }
-    
+
     this.toggleProgress = this.toggleProgress.bind(this);
   }
 

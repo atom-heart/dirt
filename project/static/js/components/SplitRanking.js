@@ -24,6 +24,16 @@ const SplitRanking = props => {
     );
   });
 
+  props.ranking.stage_disqualified.forEach(player => {
+    ranking.push(
+      <tr key={player.id}>
+        <td>{player.position}</td>
+        <td>{player.name}</td>
+        <td colSpan="2">previously disqualified</td>
+      </tr>
+    );
+  });
+
   props.ranking.not_finished.forEach(player => {
     ranking.push(
       <tr key={player.id}>
@@ -35,7 +45,7 @@ const SplitRanking = props => {
   });
 
   // don't ask, temporary
-  ranking.pop();
+  // ranking.pop();
 
   return (
     <table className="table interactive-table">

@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 def timefilter(td, hours=False):
-    if not td:
+    if td == None:
         return None
 
     if td < timedelta():
