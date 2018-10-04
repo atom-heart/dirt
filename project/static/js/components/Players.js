@@ -1,12 +1,11 @@
 import React from 'react';
 
 const StageProgress = props => {
-  let ranking = props.ranking.map(player => (
+  let players = props.players.map(player => (
       <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.position_diff}</td>
+        <td>{player.order}</td>
         <td>{player.name}</td>
-        <td>{player.points}</td>
+        <td>{player.car_name}</td>
       </tr>
   ));
 
@@ -14,14 +13,13 @@ const StageProgress = props => {
     <table className="table">
       <thead>
         <tr>
-          <th className="pos" scope="col">Pos.</th>
-          <th scope="col">Diff.</th>
+          <th className="pos" scope="col">#</th>
           <th scope="col">Name</th>
-          <th scope="col">Pts.</th>
+          <th scope="col">Car</th>
         </tr>
       </thead>
       <tbody>
-        {ranking}
+        {players}
       </tbody>
     </table>
   );

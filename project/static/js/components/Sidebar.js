@@ -27,7 +27,7 @@ class Sidebar extends React.Component {
               to={`/event/${this.props.eventId}`}
               className="nav-link"
             >
-              Informations
+              Event
             </NavLink>
           </li>
         </NavSection>

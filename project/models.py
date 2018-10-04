@@ -2,6 +2,7 @@ from project import db
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy import func, and_, case, event
 from datetime import timedelta as td
+from datetime import datetime
 
 
 #### Games ############################################################
@@ -259,6 +260,8 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
+    finished = db.Column(db.Boolean, nullable=False, default=False)
+    start = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     # Relationships
     game = db.relationship('Game')
@@ -267,13 +270,37 @@ class Event(db.Model):
     stages = db.relationship('Stage', backref='event', lazy='dynamic')
 
 
+    def get_ranking(self):
+        return db.session.query(
+                Player.id,
+                Player.name,
+                func.sum(StageRanking.points),
+                Car.name)\
+            .join(Stage, Stage.event_id == self.id)\
+            .join(StageRanking, and_(
+                StageRanking.player_id == Player.id,
+                StageRanking.stage_id == Stage.id))\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Player.id,
+                EventPlayer.event_id == self.id))\
+            .join(Car, Car.id == EventPlayer.car_id)\
+            .group_by(
+                Player.id,
+                Player.name,
+                Car.name,
+                EventPlayer.order)\
+            .order_by(
+                func.sum(StageRanking.points).desc(),
+                EventPlayer.order)\
+            .all()
+
+
     def get_car_classes(self):
         return [[cc.id, cc.name] for cc in self.car_classes]
 
 
     def get_players(self):
-        return db.session\
-            .query(
+        return db.session.query(
                 Player.id,
                 Player.name,
                 EventPlayer.order,
@@ -291,8 +318,7 @@ class Event(db.Model):
 
 
     def get_stages(self):
-        return db.session\
-            .query(
+        return db.session.query(
                 Stage.id,
                 Country.name,
                 Stage.finished,
@@ -301,6 +327,13 @@ class Event(db.Model):
             .filter(Stage.event_id == self.id)\
             .order_by(Stage.order)\
             .all()
+
+
+    def should_finish(self):
+        return db.session.query(func.count(Stage.id))\
+            .filter(Stage.event_id == self.id)\
+            .filter(Stage.finished.isnot(True))\
+            .first()[0] == 0
 
 
 class Stage(db.Model):

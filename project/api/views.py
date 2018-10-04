@@ -5,10 +5,8 @@ from project import db
 from project.filters import timefilter
 
 from project.models import Split, Stage, Event, Time, Player, StageRanking
-from project.api.rankings import get_split_ranking, get_split_progress, get_stage_ranking, get_stage_progress, get_event_ranking
+from project.api.rankings import get_event_ranking, get_split_ranking, get_split_progress, get_stage_ranking, get_stage_progress, get_event_ranking
 from project.api.helpers import normalize, add_positions, strToTimedelta, assign_points
-
-import datetime
 
 
 #### Blueprint config #################################################
@@ -35,16 +33,18 @@ def event(id):
     stages = normalize(('id', 'country', 'finished', 'order'), event.get_stages())
     car_classes = normalize(('id', 'name'), event.get_car_classes())
     players = normalize(('id', 'name', 'order', 'points', 'car_id', 'car_name'), event.get_players())
-
-    # abort(404)
+    ranking = get_event_ranking(event.id)
 
     return jsonify({
         'id': event.id,
         'name': event.name,
+        'finished': event.finished,
+        'start': event.start,
         'game': game,
         'players': players,
         'carClasses': car_classes,
-        'stages': stages
+        'stages': stages,
+        'ranking': ranking
     })
 
 
@@ -157,10 +157,14 @@ def api_add_time():
 
                 db.session.add_all(ranking)
 
+                if split.stage.event.should_finish():
+                    split.stage.event.finished = True
+
 
         else:
             split.finished = False
             split.stage.finished = False
+            split.stage.event.finished = False
 
         db.session.add_all([time, split, player_ranking])
         db.session.commit()

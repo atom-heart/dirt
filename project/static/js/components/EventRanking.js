@@ -1,13 +1,13 @@
 import React from 'react';
 
-const StageProgress = props => {
+const EventRanking = props => {
   let ranking = props.ranking.map(player => (
-      <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.position_diff}</td>
-        <td>{player.name}</td>
-        <td>{player.points}</td>
-      </tr>
+    <tr key={player.id}>
+      <td>{player.position}</td>
+      <td>{player.name}</td>
+      <td>{player.points}</td>
+      <td>{player.car}</td>
+    </tr>
   ));
 
   return (
@@ -15,9 +15,9 @@ const StageProgress = props => {
       <thead>
         <tr>
           <th className="pos" scope="col">Pos.</th>
-          <th scope="col">Diff.</th>
           <th scope="col">Name</th>
           <th scope="col">Pts.</th>
+          <th scope="col">Car</th>
         </tr>
       </thead>
       <tbody>
@@ -27,4 +27,4 @@ const StageProgress = props => {
   );
 }
 
-export default StageProgress;
+export default EventRanking;

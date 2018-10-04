@@ -37,7 +37,7 @@ const SplitRanking = props => {
   props.ranking.not_finished.forEach(player => {
     ranking.push(
       <tr key={player.id}>
-        <td>{player.position}</td>
+        <td></td>
         <td>{player.name}</td>
         <td colSpan="2"></td>
       </tr>

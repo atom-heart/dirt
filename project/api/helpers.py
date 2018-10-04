@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from project.filters import timefilter
 
 
@@ -150,8 +152,8 @@ def normalize(keys, players):
 
 def strToTimedelta(datestring):
     """Converts JavaScript datetime string to Python timedelta"""
-    dt = datetime.datetime.strptime(datestring, '%Y-%m-%dT%H:%M:%S.%fZ')
-    td = datetime.timedelta(
+    dt = datetime.strptime(datestring, '%Y-%m-%dT%H:%M:%S.%fZ')
+    td = timedelta(
         hours=dt.hour,
         minutes=dt.minute,
         seconds=dt.second,
