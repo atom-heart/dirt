@@ -1,7 +1,7 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React from 'react'
+import { connect } from 'react-redux'
 
-import { Card, CardBody } from 'reactstrap';
+import { Card, CardBody } from 'reactstrap'
 
 import EventRanking from './EventRanking'
 import Players from './Players'
@@ -11,11 +11,11 @@ class EventInfo extends React.Component {
   render() {
     let players = this.props.players.map((player) => (
       <li key={player.id}>{player.name}</li>
-    ));
+    ))
 
     let carClasses = this.props.carClasses.map((carClass) => (
       <li key={carClass.id}>{carClass.name}</li>
-    ));
+    ))
 
     return (
       <div>
@@ -73,6 +73,6 @@ const mapStateToProps = state => ({
   ranking: state.event.ranking,
   finished: state.event.finished,
   start: state.event.start,
-});
+})
 
-export default connect(mapStateToProps)(EventInfo);
+export default connect(mapStateToProps)(EventInfo)

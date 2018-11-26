@@ -1,6 +1,6 @@
-import React from 'react';
+import React from 'react'
 
-import { Jumbotron } from 'reactstrap';
+import { Jumbotron } from 'reactstrap'
 
 const styles = {
   display: 'flex',
@@ -14,4 +14,4 @@ const PageLoader = (props) => {
   return <div style={styles}>Loading...</div>
 }
 
-export default PageLoader;
+export default PageLoader

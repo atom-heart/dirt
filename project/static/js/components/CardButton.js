@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const CardButton = props => (
   <div className="card-footer border-top">
@@ -8,6 +8,6 @@ const CardButton = props => (
       {props.text}
     </button>
   </div>
-);
+)
 
-export default CardButton;
+export default CardButton

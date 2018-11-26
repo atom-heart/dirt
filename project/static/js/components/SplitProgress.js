@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
 const SplitProgress = props => {
-  let ranking = [];
+  let ranking = []
 
   props.ranking.finished.forEach(player => {
     ranking.push(
@@ -12,8 +12,8 @@ const SplitProgress = props => {
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
       </tr>
-    );
-  });
+    )
+  })
 
   props.ranking.disqualified.forEach(player => {
     ranking.push(
@@ -23,8 +23,8 @@ const SplitProgress = props => {
         <td>{player.name}</td>
         <td colSpan="2">disqualified</td>
       </tr>
-    );
-  });
+    )
+  })
 
   return (
     <table className="table">
@@ -41,7 +41,7 @@ const SplitProgress = props => {
         {ranking}
       </tbody>
     </table>
-  );
+  )
 }
 
-export default SplitProgress;
+export default SplitProgress

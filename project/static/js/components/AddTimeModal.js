@@ -1,17 +1,17 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-import { isLoadingModal, dispatchUpdateTurn, sendTurn } from '../actions/forms-actions.js';
+import { isLoadingModal, dispatchUpdateTurn, sendTurn } from '../actions/forms-actions.js'
 
-import { Row, Col, Input, Button, Modal, ModalHeader, FormGroup, Label } from 'reactstrap';
+import { Row, Col, Input, Button, Modal, ModalHeader, FormGroup, Label } from 'reactstrap'
 
 const marginLeft = { marginLeft: 10 }
 const dimBackground = { background: '#f6f6f6' }
 
 class AddTimeModal extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       error: false,
@@ -23,25 +23,25 @@ class AddTimeModal extends React.Component {
     }
 
     if (props.update && props.player.time) {
-      const time = props.player.time;
+      const time = props.player.time
 
-      this.state.minutes = parseInt(time.slice(0, 2), 10);
-      this.state.seconds = parseInt(time.slice(3, 5), 10);
-      this.state.milliseconds = parseInt(time.slice(6), 10);
+      this.state.minutes = parseInt(time.slice(0, 2), 10)
+      this.state.seconds = parseInt(time.slice(3, 5), 10)
+      this.state.milliseconds = parseInt(time.slice(6), 10)
     } else if (props.update) {
-      this.state.disqualify = true;
+      this.state.disqualify = true
     }
 
-    this.toggleConfirm = this.toggleConfirm.bind(this);
-    this.handleMins = this.handleMins.bind(this);
-    this.handleSecs = this.handleSecs.bind(this);
-    this.handleMills = this.handleMills.bind(this);
-    this.handleCheckbox = this.handleCheckbox.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.toggleConfirm = this.toggleConfirm.bind(this)
+    this.handleMins = this.handleMins.bind(this)
+    this.handleSecs = this.handleSecs.bind(this)
+    this.handleMills = this.handleMills.bind(this)
+    this.handleCheckbox = this.handleCheckbox.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   toggleConfirm() {
-    this.setState({ confirmation: !this.state.confirmation });
+    this.setState({ confirmation: !this.state.confirmation })
   }
 
   handleMins(event) { this.props.updateTurn({ mins: event.target.value }) }
@@ -50,9 +50,9 @@ class AddTimeModal extends React.Component {
   handleCheckbox() { this.props.updateTurn({ disq: !this.props.disq }) }
 
   handleSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    let time = new Date(0, 0, 0, 0, this.props.mins, this.props.secs, this.props.mills);
+    let time = new Date(0, 0, 0, 0, this.props.mins, this.props.secs, this.props.mills)
 
     let data = {
       player_id: this.props.player.id,
@@ -61,24 +61,24 @@ class AddTimeModal extends React.Component {
       time: this.props.disq ? null : time.toJSON()
     }
 
-    this.props.sendTurn(data);
+    this.props.sendTurn(data)
   }
 
   render() {
-    let title, footer = null;
+    let title, footer = null
 
     if (this.props.update) {
-      title = 'Update';
+      title = 'Update'
     } else {
-      title = 'Add time';
+      title = 'Add time'
     }
 
-    let blockInput = this.state.error || this.state.disqualify;
+    let blockInput = this.state.error || this.state.disqualify
 
     return (
       <div id="splitModal" className="modal" style={{
-          display: 'block',
-          background: 'rgba(0, 0, 0, .5)'
+        display: 'block',
+        background: 'rgba(0, 0, 0, .5)'
       }}>
         <div className="split-modal modal-dialog modal-dialog-centered">
 
@@ -138,18 +138,18 @@ class AddTimeModal extends React.Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-const mapStateToProps = state => state.forms.addTimeForm;
+const mapStateToProps = state => state.forms.addTimeForm
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
     updateTurn: dispatchUpdateTurn,
     isLoadingModal,
     sendTurn
-  }, dispatch);
+  }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddTimeModal);
+export default connect(mapStateToProps, mapDispatchToProps)(AddTimeModal)

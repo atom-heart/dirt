@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const EventRanking = props => {
   let ranking = props.ranking.map(player => (
@@ -8,7 +8,7 @@ const EventRanking = props => {
       <td>{player.points}</td>
       <td>{player.car}</td>
     </tr>
-  ));
+  ))
 
   return (
     <table className="table">
@@ -24,7 +24,7 @@ const EventRanking = props => {
         {ranking}
       </tbody>
     </table>
-  );
+  )
 }
 
-export default EventRanking;
+export default EventRanking

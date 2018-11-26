@@ -1,63 +1,63 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-import { fetchStage, reloadStage } from '../actions/event-actions.js';
+import { fetchStage, reloadStage } from '../actions/event-actions.js'
 
-import { Card } from 'reactstrap';
+import { Card } from 'reactstrap'
 
-import TableHeader from './TableHeader';
-import StageRanking from './StageRanking';
-import StageProgress from './StageProgress';
-import Split from './Split';
-import ProgressButton from './ProgressButton';
-import StageFinishedFooter from './StageFinishedFooter';
+import TableHeader from './TableHeader'
+import StageRanking from './StageRanking'
+import StageProgress from './StageProgress'
+import Split from './Split'
+import ProgressButton from './ProgressButton'
+import StageFinishedFooter from './StageFinishedFooter'
 
 class Stage extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = { showProgress: false }
 
-    this.reloadStage = this.reloadStage.bind(this);
-    this.toggleProgress = this.toggleProgress.bind(this);
+    this.reloadStage = this.reloadStage.bind(this)
+    this.toggleProgress = this.toggleProgress.bind(this)
   }
 
   reloadStage(event) {
-    event.preventDefault();
-    this.props.reloadStage(this.props.match.params.stageId);
+    event.preventDefault()
+    this.props.reloadStage(this.props.match.params.stageId)
   }
 
   toggleProgress(event) {
-    this.setState({ showProgress: !this.state.showProgress });
+    this.setState({ showProgress: !this.state.showProgress })
   }
 
   componentDidMount() {
     if (this.currentStage && !this.currentStage.loaded) {
-      this.props.fetchStage(this.props.match.params.stageId);
+      this.props.fetchStage(this.props.match.params.stageId)
     }
   }
 
   componentDidUpdate() {
     if (this.currentStage && !this.currentStage.loaded && !this.currentStage.error) {
-      this.props.fetchStage(this.props.match.params.stageId);
+      this.props.fetchStage(this.props.match.params.stageId)
     }
   }
 
   render() {
     this.currentStage = this.props.stages.find(stage => {
       return stage.id == this.props.match.params.stageId
-    });
+    })
 
     if (!this.currentStage) {
-      return <div>No such stage.</div>;
+      return <div>No such stage.</div>
     }
 
     else if (this.currentStage.error) {
-      return <div>Error loading stage data. <a href="#" onClick={this.reloadStage}>Click here</a> to try again.</div>;
+      return <div>Error loading stage data. <a href="#" onClick={this.reloadStage}>Click here</a> to try again.</div>
     }
 
     else if (this.currentStage.isLoading) {
-      return <div>Loading...</div>;
+      return <div>Loading...</div>
     }
 
     else {
@@ -65,15 +65,15 @@ class Stage extends React.Component {
         <StageProgress ranking={this.currentStage.progress} />
       ) : (
         <StageRanking ranking={this.currentStage.ranking} />
-      );
+      )
 
       let currentStageSplits = this.props.splits.filter(split => (
         split.stage_id == this.props.match.params.stageId
-      ));
+      ))
 
       let splits = currentStageSplits.map(split => (
         <Split split={split} key={split.id} />
-      ));
+      ))
 
       return (
         <div>
@@ -82,7 +82,7 @@ class Stage extends React.Component {
             <TableHeader>
               <h4>{this.currentStage.country}</h4>
               <span className="text-muted weather">
-              {this.currentStage.finished ? 'Finished' : 'In progress'}
+                {this.currentStage.finished ? 'Finished' : 'In progress'}
               </span>
             </TableHeader>
 
@@ -109,7 +109,7 @@ class Stage extends React.Component {
           }
 
         </div>
-      );
+      )
     }
   }
 }
@@ -118,13 +118,13 @@ const mapStateToProps = state => ({
   stages: state.event.stages,
   splits: state.event.splits,
   players: state.event.players
-});
+})
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
     fetchStage,
     reloadStage
-  }, dispatch);
+  }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Stage);
+export default connect(mapStateToProps, mapDispatchToProps)(Stage)

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const ProgressButton = props => (
   <div className="card-footer border-top">
@@ -9,6 +9,6 @@ const ProgressButton = props => (
       {props.children}
     </button>
   </div>
-);
+)
 
-export default ProgressButton;
+export default ProgressButton

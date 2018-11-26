@@ -1,8 +1,8 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Link, NavLink } from 'react-router-dom';
+import React from 'react'
+import { connect } from 'react-redux'
+import { Link, NavLink } from 'react-router-dom'
 
-import NavSection from './NavSection';
+import NavSection from './NavSection'
 
 class Sidebar extends React.Component {
   render() {
@@ -15,7 +15,7 @@ class Sidebar extends React.Component {
           {stage.country}
         </NavLink>
       </li>
-    ));
+    ))
 
     return (
       <nav id="sidebar">
@@ -35,12 +35,12 @@ class Sidebar extends React.Component {
           {stages}
         </NavSection>
       </nav>
-    );
+    )
   }
 }
 
 const mapStateToProps = state => ({
   stages: state.event.stages
-});
+})
 
-export default connect(mapStateToProps, null, null, {pure: false})(Sidebar);
+export default connect(mapStateToProps, null, null, {pure: false})(Sidebar)

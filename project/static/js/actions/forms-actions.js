@@ -1,14 +1,14 @@
-import { BASE_URL } from '../config';
+import { BASE_URL } from '../config'
 
-import { fetchSplit, dispatchCascadeUpdate, dispatchTurnUpdate } from './event-actions.js';
+import { fetchSplit, dispatchCascadeUpdate, dispatchTurnUpdate } from './event-actions.js'
 
 export const IS_LOADING_MODAL = 'forms:isLoadingModal'
-export const UPDATE_TURN = 'forms:updateTurn';
-export const TURN_UPDATED = 'forms:turnUpdated';
+export const UPDATE_TURN = 'forms:updateTurn'
+export const TURN_UPDATED = 'forms:turnUpdated'
 
 export const isLoadingModal = () => ({
   type: IS_LOADING_MODAL
-});
+})
 
 export const turnUpdated = () => ({
   type: TURN_UPDATED
@@ -20,12 +20,12 @@ export const updateTurn = data => ({
 })
 
 export const dispatchUpdateTurn = data => {
-  return dispatch => dispatch(updateTurn(data));
+  return dispatch => dispatch(updateTurn(data))
 }
 
 export const sendTurn = data => {
   return dispatch => {
-    dispatch(isLoadingModal());
+    dispatch(isLoadingModal())
 
     fetch(`${BASE_URL}api/time`, {
       method: 'PUT',
@@ -38,13 +38,13 @@ export const sendTurn = data => {
       .then(res => res.json())
       .then(
         (response) => {
-          dispatch(turnUpdated());
-          dispatch(dispatchTurnUpdate(response));
+          dispatch(turnUpdated())
+          dispatch(dispatchTurnUpdate(response))
           // dispatch(fetchSplit(data.split_id));
         },
         (error) => {
           console.error('Error: ', JSON.stringify(error))
         }
-      );
+      )
   }
 }

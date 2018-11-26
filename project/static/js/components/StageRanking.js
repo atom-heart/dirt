@@ -1,7 +1,7 @@
-import React from 'react';
+import React from 'react'
 
 const StageRanking = props => {
-  let ranking = [];
+  let ranking = []
 
   props.ranking.finished.forEach(player => {
     ranking.push(
@@ -13,7 +13,7 @@ const StageRanking = props => {
         <td>{player.time_diff}</td>
       </tr>
     )
-  });
+  })
 
   props.ranking.disqualified.forEach(player => {
     ranking.push(
@@ -24,7 +24,7 @@ const StageRanking = props => {
         <td colSpan="2">disqualified</td>
       </tr>
     )
-  });
+  })
 
   return (
     <table className="table">
@@ -41,7 +41,7 @@ const StageRanking = props => {
         {ranking}
       </tbody>
     </table>
-  );
+  )
 }
 
-export default StageRanking;
+export default StageRanking

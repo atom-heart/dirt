@@ -2,16 +2,16 @@ import React from 'react'
 
 import { Card } from 'reactstrap'
 
-import TableHeader from './TableHeader';
-import SplitRanking from './SplitRanking';
-import SplitProgress from './SplitProgress';
+import TableHeader from './TableHeader'
+import SplitRanking from './SplitRanking'
+import SplitProgress from './SplitProgress'
 import ProgressButton from './ProgressButton'
 import FinishSplitButton from './FinishSplitButton'
-import AddTimeModal from './AddTimeModal';
+import AddTimeModal from './AddTimeModal'
 
 class Split extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       showProgress: false,
@@ -20,16 +20,16 @@ class Split extends React.Component {
       finishSplitLoading: false
     }
 
-    this.toggleProgress = this.toggleProgress.bind(this);
-    this.toggleModal = this.toggleModal.bind(this);
+    this.toggleProgress = this.toggleProgress.bind(this)
+    this.toggleModal = this.toggleModal.bind(this)
   }
 
   toggleProgress(event) {
-    this.setState({ showProgress: !this.state.showProgress });
+    this.setState({ showProgress: !this.state.showProgress })
   }
 
   toggleModal(e) {
-    this.setState({ showModal: !this.state.showModal });
+    this.setState({ showModal: !this.state.showModal })
   }
 
   render() {
@@ -64,4 +64,4 @@ class Split extends React.Component {
   }
 }
 
-export default Split;
+export default Split

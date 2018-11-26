@@ -1,14 +1,14 @@
-import React from 'react';
+import React from 'react'
 
 const StageProgress = props => {
   let ranking = props.ranking.map(player => (
-      <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.position_diff}</td>
-        <td>{player.name}</td>
-        <td>{player.points}</td>
-      </tr>
-  ));
+    <tr key={player.id}>
+      <td>{player.position}</td>
+      <td>{player.position_diff}</td>
+      <td>{player.name}</td>
+      <td>{player.points}</td>
+    </tr>
+  ))
 
   return (
     <table className="table">
@@ -24,7 +24,7 @@ const StageProgress = props => {
         {ranking}
       </tbody>
     </table>
-  );
+  )
 }
 
-export default StageProgress;
+export default StageProgress

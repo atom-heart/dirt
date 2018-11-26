@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const StageFinishedFooter = () => (
   <div className="alert border d-flex justify-content-between align-items-center">
@@ -10,6 +10,6 @@ const StageFinishedFooter = () => (
       Show ranking
     </button>
   </div>
-);
+)
 
-export default StageFinishedFooter;
+export default StageFinishedFooter

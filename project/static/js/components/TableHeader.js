@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const TableHeader = (props) => {
   return (
@@ -7,7 +7,7 @@ const TableHeader = (props) => {
     >
       {props.children}
     </div>
-  );
+  )
 }
 
-export default TableHeader;
+export default TableHeader

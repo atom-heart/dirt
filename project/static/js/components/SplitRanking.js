@@ -1,22 +1,22 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-import { dispatchUpdateTurn } from '../actions/forms-actions.js';
+import { dispatchUpdateTurn } from '../actions/forms-actions.js'
 
-import AddTimeModal from './AddTimeModal';
+import AddTimeModal from './AddTimeModal'
 
 class SplitRanking extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
+    this.openModal = this.openModal.bind(this)
+    this.closeModal = this.closeModal.bind(this)
   }
 
   openModal(player, update) {
     if (!this.props.split.active) {
-      return;
+      return
     }
 
     this.props.updateTurn({
@@ -44,9 +44,9 @@ class SplitRanking extends React.Component {
         close={this.closeModal}
         player={this.props.player}
       />
-    ) : null;
+    ) : null
 
-    let ranking = [];
+    let ranking = []
 
     this.props.split.ranking.finished.forEach(player => {
       ranking.push(
@@ -56,8 +56,8 @@ class SplitRanking extends React.Component {
           <td>{player.time}</td>
           <td>{player.time_diff}</td>
         </tr>
-      );
-    });
+      )
+    })
 
     this.props.split.ranking.disqualified.forEach(player => {
       ranking.push(
@@ -66,8 +66,8 @@ class SplitRanking extends React.Component {
           <td>{player.name}</td>
           <td colSpan="2">disqualified</td>
         </tr>
-      );
-    });
+      )
+    })
 
     this.props.split.ranking.stage_disqualified.forEach(player => {
       ranking.push(
@@ -76,8 +76,8 @@ class SplitRanking extends React.Component {
           <td>{player.name}</td>
           <td colSpan="2">previously disqualified</td>
         </tr>
-      );
-    });
+      )
+    })
 
     this.props.split.ranking.not_finished.forEach(player => {
       ranking.push(
@@ -86,8 +86,8 @@ class SplitRanking extends React.Component {
           <td>{player.name}</td>
           <td colSpan="2"></td>
         </tr>
-      );
-    });
+      )
+    })
 
     return (
       <div>
@@ -107,18 +107,18 @@ class SplitRanking extends React.Component {
 
         {modal}
       </div>
-    );
+    )
   }
 }
 
 const mapStateToProps = state => ({
   showModal: state.forms.addTimeForm.showModal
-});
+})
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
     updateTurn: dispatchUpdateTurn
-  }, dispatch);
+  }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SplitRanking);
+export default connect(mapStateToProps, mapDispatchToProps)(SplitRanking)
