@@ -3,13 +3,17 @@ body {
   height: 100%;
 }
 
+body {
+  padding-top: 20px;
+  overflow-y: scroll;
+}
+
 a {
   cursor: pointer
 }
 
 .container {
   max-width: 900px;
-  margin-top: 20px;
 }
 
 /*
@@ -190,6 +194,12 @@ a {
   /* background: #fafafa; */
 }
 
+
+/*
+*
+* Add time modal
+*
+*/
 .time-input {
   max-width: 42px;
   margin-right: 10px;
@@ -202,4 +212,23 @@ a {
 
 .split-modal {
   max-width: 350px;
+}
+
+.modal-loading {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1001;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.modal-loading div {
+  display: block;
+  background: rgba(0, 0, 0, .4);
+  width: calc(100% - 10px);
+  height: calc(100% - 10px);
+  border-radius: 4px;
 }

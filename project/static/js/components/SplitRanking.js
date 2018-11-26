@@ -1,67 +1,124 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-const SplitRanking = props => {
-  let ranking = [];
+import { dispatchUpdateTurn } from '../actions/forms-actions.js';
 
-  props.ranking.finished.forEach(player => {
-    ranking.push(
-      <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.name}</td>
-        <td>{player.time}</td>
-        <td>{player.time_diff}</td>
-      </tr>
-    );
-  });
+import AddTimeModal from './AddTimeModal';
 
-  props.ranking.disqualified.forEach(player => {
-    ranking.push(
-      <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.name}</td>
-        <td colSpan="2">disqualified</td>
-      </tr>
-    );
-  });
+class SplitRanking extends React.Component {
+  constructor(props) {
+    super(props);
 
-  props.ranking.stage_disqualified.forEach(player => {
-    ranking.push(
-      <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.name}</td>
-        <td colSpan="2">previously disqualified</td>
-      </tr>
-    );
-  });
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+  }
 
-  props.ranking.not_finished.forEach(player => {
-    ranking.push(
-      <tr key={player.id}>
-        <td></td>
-        <td>{player.name}</td>
-        <td colSpan="2"></td>
-      </tr>
-    );
-  });
+  openModal(player, update) {
+    if (!this.props.split.active) {
+      return;
+    }
 
-  // don't ask, temporary
-  // ranking.pop();
+    this.props.updateTurn({
+      showModal: true,
+      player: {
+        id: player.id,
+        name: player.name
+      },
+      split: {
+        id: this.props.split.id,
+        track: this.props.split.track
+      }
+    })
+  }
 
-  return (
-    <table className="table interactive-table">
-      <thead>
-        <tr>
-          <th className="pos" scope="col">Pos.</th>
-          <th scope="col">Name</th>
-          <th scope="col">Time</th>
-          <th scope="col">Diff.</th>
+  closeModal() {
+    this.props.updateTurn({
+      showModal: false
+    })
+  }
+
+  render() {
+    let modal = this.props.showModal ? (
+      <AddTimeModal
+        close={this.closeModal}
+        player={this.props.player}
+      />
+    ) : null;
+
+    let ranking = [];
+
+    this.props.split.ranking.finished.forEach(player => {
+      ranking.push(
+        <tr key={player.id} onClick={() => this.openModal(player, true)}>
+          <td>{player.position}</td>
+          <td>{player.name}</td>
+          <td>{player.time}</td>
+          <td>{player.time_diff}</td>
         </tr>
-      </thead>
-      <tbody>
-        {ranking}
-      </tbody>
-    </table>
-  );
+      );
+    });
+
+    this.props.split.ranking.disqualified.forEach(player => {
+      ranking.push(
+        <tr key={player.id} onClick={() => this.openModal(player, true)}>
+          <td>{player.position}</td>
+          <td>{player.name}</td>
+          <td colSpan="2">disqualified</td>
+        </tr>
+      );
+    });
+
+    this.props.split.ranking.stage_disqualified.forEach(player => {
+      ranking.push(
+        <tr key={player.id}>
+          <td>{player.position}</td>
+          <td>{player.name}</td>
+          <td colSpan="2">previously disqualified</td>
+        </tr>
+      );
+    });
+
+    this.props.split.ranking.not_finished.forEach(player => {
+      ranking.push(
+        <tr key={player.id} onClick={() => this.openModal(player, false)}>
+          <td></td>
+          <td>{player.name}</td>
+          <td colSpan="2"></td>
+        </tr>
+      );
+    });
+
+    return (
+      <div>
+        <table className="table interactive-table">
+          <thead>
+            <tr>
+              <th className="pos" scope="col">Pos.</th>
+              <th scope="col">Name</th>
+              <th scope="col">Time</th>
+              <th scope="col">Diff.</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ranking}
+          </tbody>
+        </table>
+
+        {modal}
+      </div>
+    );
+  }
 }
 
-export default SplitRanking;
+const mapStateToProps = state => ({
+  showModal: state.forms.addTimeForm.showModal
+});
+
+const mapDispatchToProps = dispatch => {
+  return bindActionCreators({
+    updateTurn: dispatchUpdateTurn
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SplitRanking);

@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+from project import db
+from project.models import Split, Stage
 from project.filters import timefilter
 
 
@@ -20,12 +22,13 @@ def add_positions(ranking):
         elif player['disqualified'] and prev['disqualified']:
             player['position'] = prev['position']
 
-        # Base case
-        elif player['time'] or player['disqualified']:
-            player['position'] = pos
+        elif 'stage_disqualified' in player and (player['disqualified'] or player['stage_disqualified']) and (player['disqualified'] or player['stage_disqualified']):
+            player['position'] = prev['position']
 
+        # Base case
+        # elif player['time'] or player['disqualified']:
         else:
-            break
+            player['position'] = pos
 
         prev = player
 
@@ -163,7 +166,7 @@ def strToTimedelta(datestring):
     return td
 
 
-def assign_points(players):
+def add_points(players):
     # temp point system which works only works for 4 or less players
     points = [5, 3, 1, 0]
 
@@ -172,3 +175,46 @@ def assign_points(players):
         result[player['id']] = 0 if player['disqualified'] else points[player['position'] - 1]
 
     return result
+
+
+def get_next_split(curr_split):
+    if curr_split.last_in_stage:
+        next_stage = db.session.query(Stage.id)\
+            .filter(Stage.event_id == curr_split.stage.event_id)\
+            .filter(Stage.order == curr_split.stage.order + 1)\
+            .first()
+
+        next_split = Split.query\
+            .filter(Split.stage_id == next_stage.id)\
+            .filter(Split.order == 1)\
+            .first()
+
+    else:
+        next_split = Split.query\
+            .filter(Split.stage_id == curr_split.stage_id)\
+            .filter(Split.order == curr_split.order + 1)\
+            .first()
+
+    return next_split
+
+
+def get_prev_split(curr_split):
+    # Curr split first in stage, grab last from prev stage
+    if curr_split.order == 1:
+        prev_stage = db.session.query(Stage.id)\
+            .filter(Stage.event_id == curr_split.stage.event_id)\
+            .filter(Stage.order == curr_split.stage.order - 1)\
+            .first()
+
+        prev_split = Split.query\
+            .filter(Split.stage_id == prev_stage.id)\
+            .order_by(Split.order.desc())\
+            .first()
+
+    else:
+        prev_split = Split.query\
+            .filter(Split.stage_id == curr_split.stage_id)\
+            .filter(Split.order == curr_split.order - 1)\
+            .first()
+
+    return prev_split

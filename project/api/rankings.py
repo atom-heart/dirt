@@ -25,6 +25,7 @@ def get_split_progress(id):
 
     curr = add_positions(curr)
     prev = add_positions(prev)
+
     curr = add_pos_diffs(prev, curr)
 
     curr = add_time_diffs(curr)

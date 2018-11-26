@@ -10,6 +10,7 @@ import NavSection from './NavSection';
 import PageLoader from './PageLoader';
 import EventInfo from './EventInfo';
 import Stage from './Stage';
+import AddTimeModal from './AddTimeModal';
 
 import { Row, Button } from 'reactstrap';
 
@@ -36,7 +37,6 @@ class Event extends React.Component {
   }
 
   render() {
-
     if (this.props.isLoading) {
       return <PageLoader />;
     }

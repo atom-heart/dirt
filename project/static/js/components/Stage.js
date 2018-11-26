@@ -10,7 +10,6 @@ import TableHeader from './TableHeader';
 import StageRanking from './StageRanking';
 import StageProgress from './StageProgress';
 import Split from './Split';
-import AddTimeModal from './AddTimeModal';
 import ProgressButton from './ProgressButton';
 import StageFinishedFooter from './StageFinishedFooter';
 
@@ -62,15 +61,15 @@ class Stage extends React.Component {
     }
 
     else {
-      let currentStageSplits = this.props.splits.filter(split => (
-        split.stage_id == this.props.match.params.stageId
-      ));
-
-      let stageRanking = this.currentStage.finished && this.state.showProgress ? (
+      let stageRanking = this.state.showProgress ? (
         <StageProgress ranking={this.currentStage.progress} />
       ) : (
         <StageRanking ranking={this.currentStage.ranking} />
       );
+
+      let currentStageSplits = this.props.splits.filter(split => (
+        split.stage_id == this.props.match.params.stageId
+      ));
 
       let splits = currentStageSplits.map(split => (
         <Split split={split} key={split.id} />
@@ -82,11 +81,9 @@ class Stage extends React.Component {
 
             <TableHeader>
               <h4>{this.currentStage.country}</h4>
-              {!this.currentStage.finished &&
-                <span className="text-muted weather">
-                  In progress
-                </span>
-              }
+              <span className="text-muted weather">
+              {this.currentStage.finished ? 'Finished' : 'In progress'}
+              </span>
             </TableHeader>
 
             {this.currentStage.finished &&
@@ -111,7 +108,6 @@ class Stage extends React.Component {
             </div>
           }
 
-          <AddTimeModal />
         </div>
       );
     }
