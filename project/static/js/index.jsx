@@ -1,16 +1,17 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import '../css/layout.css';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
+import '../css/layout.css'
 
-import ErrorBoundary from './components/ErrorBoundary';
-import Event from './components/Event';
-import store from './store.js';
+import ErrorBoundary from './components/ErrorBoundary'
+import Event from './components/Event'
+import ModalRoot from './components/ModalRoot'
+import store from './store.js'
 
-import { Container } from 'reactstrap';
+import { Container } from 'reactstrap'
 
 ReactDOM.render((
   <ErrorBoundary>
@@ -19,8 +20,10 @@ ReactDOM.render((
         <Container>
           <Route path="/" exact render={() => {return <div>Hello!</div>}} />
           <Route path="/event/:id" component={Event} />
+          
+          <Route path="/" component={ModalRoot} />
         </Container>
       </Router>
     </Provider>
   </ErrorBoundary>
-), document.getElementById('root'));
+), document.getElementById('root'))

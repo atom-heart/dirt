@@ -76,7 +76,7 @@ class AddTimeModal extends React.Component {
     let blockInput = this.state.error || this.state.disqualify
 
     return (
-      <div id="splitModal" className="modal" style={{
+      <div className="modal" style={{
         display: 'block',
         background: 'rgba(0, 0, 0, .5)'
       }}>

@@ -6,6 +6,7 @@ import { Card, CardBody } from 'reactstrap'
 import EventRanking from './EventRanking'
 import Players from './Players'
 import TableHeader from './TableHeader'
+import Modal from './Modal'
 
 class EventInfo extends React.Component {
   render() {
@@ -19,7 +20,7 @@ class EventInfo extends React.Component {
 
     return (
       <div>
-
+        
         <Card>
           <TableHeader>
             <h4>{this.props.finished ? 'Event finished' : 'Event in progress'}</h4>
