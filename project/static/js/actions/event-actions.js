@@ -87,10 +87,9 @@ export const reloadStage = id => {
   }
 }
 
-export const updateSplit = (splitId, payload) => ({
+export const updateSplit = split => ({
   type: UPDATE_SPLIT,
-  splitId,
-  payload
+  split
 })
 
 export const fetchSplit = splitId => {

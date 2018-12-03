@@ -101,12 +101,7 @@ def group_players(players):
     grouped = {'finished': [], 'disqualified': [], 'not_finished': []}
 
     for player in players:
-        # Save `disqualified` property to temporary variable, and delete from player dict
-        disq = player['disqualified']
-        del player['disqualified']
-
-        # Assign to suitable groups
-        if disq:
+        if player['disqualified']:
             grouped['disqualified'].append(player)
         elif player['time']:
             grouped['finished'].append(player)
@@ -130,18 +125,11 @@ def group_players_ranking(players):
     grouped = {'finished': [], 'disqualified': [], 'not_finished': [], 'stage_disqualified': []}
 
     for player in players:
-        # Save `disqualified` property to temporary variable, and delete from player dict
-        disq = player['disqualified']
-        stage_disq = player['stage_disqualified']
-        del player['disqualified']
-        del player['stage_disqualified']
-
-        # Assign to suitable groups
         if player['time']:
             grouped['finished'].append(player)
-        elif disq:
+        elif player['disqualified']:
             grouped['disqualified'].append(player)
-        elif stage_disq:
+        elif player['stage_disqualified']:
             grouped['stage_disqualified'].append(player)
         else:
             grouped['not_finished'].append(player)

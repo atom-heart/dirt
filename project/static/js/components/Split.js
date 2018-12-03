@@ -7,7 +7,6 @@ import SplitRanking from './SplitRanking'
 import SplitProgress from './SplitProgress'
 import ProgressButton from './ProgressButton'
 import FinishSplitButton from './FinishSplitButton'
-import AddTimeModal from './AddTimeModal'
 
 class Split extends React.Component {
   constructor(props) {

@@ -155,7 +155,7 @@ a {
   padding: 48px 0;
 }
 
-.interactive-table tbody tr:hover {
+.interactive-row:hover {
   background: #fafafa;
   cursor: pointer;
 }
@@ -255,7 +255,6 @@ a {
     overflow: auto;
     text-align: center;
     padding: 4px;
-    /* cursor: pointer; */
 }
 
 .modal-content-div:after {
@@ -274,6 +273,10 @@ a {
     vertical-align: middle;
     box-sizing: border-box;
     max-width: auto;
-    cursor: default;
     border-radius: 4px;
+    text-align: left;
+}
+
+.modal-dialog-div form {
+  margin-bottom: 0
 }

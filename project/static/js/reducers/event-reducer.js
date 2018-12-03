@@ -87,8 +87,8 @@ export const eventReducer = (state = eventBlueprint, action) => {
   case UPDATE_SPLIT:
     allSplits = JSON.parse(JSON.stringify(state.splits))
 
-    currentSplit = allSplits.find(split => split.id == action.splitId)
-    currentSplit = Object.assign(currentSplit, action.payload)
+    currentSplit = allSplits.find(split => split.id == action.split.id)
+    currentSplit = Object.assign(currentSplit, action.split)
 
     return Object.assign({}, state, {splits: allSplits})
 
