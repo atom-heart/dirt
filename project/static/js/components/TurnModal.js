@@ -13,6 +13,7 @@ import TimeInput from './TimeInput'
 import ModalHeader from './styled/ModalHeader'
 import ModalBody from './styled/ModalBody'
 import ModalFooter from './styled/ModalFooter'
+import ModalError from './styled/ModalError'
 import ModalCloseButton from './styled/ModalCloseButton'
 
 import { hideModal } from '../actions/modal-actions'
@@ -23,6 +24,7 @@ import { sendTurn } from '../agents/turn-agents'
 class TurnModal extends React.Component {
   constructor(props) {
     super(props)
+
     this.onClose = this.onClose.bind(this)
     this.onSend = this.onSend.bind(this)
   }
@@ -43,15 +45,7 @@ class TurnModal extends React.Component {
   }
 
   render() {
-    let button = {}
-
-    if (this.props.error) {
-      button = { text: 'Error. Try again!', color: 'danger' }
-    } else if (this.props.sending) {
-      button = { text: 'Sending...', color: 'primary', disabled: true }
-    } else {
-      button = { text: 'Send', color: 'primary' }
-    }
+    const buttonText = this.props.isLoading ? 'Sending...' : 'Send'
 
     return (
       <Modal onClose={this.onClose}>
@@ -59,9 +53,9 @@ class TurnModal extends React.Component {
 
           <ModalHeader>
             <div>
-              <h5 className="modal-title">Add time</h5>
+              <h5 className="modal-title">{this.props.player.name}</h5>
               <span className="text-muted">
-                {this.props.player.name} / {this.props.split.track}
+                {this.props.split.track}
               </span>
             </div>
             <ModalCloseButton onClick={this.onClose} />
@@ -85,13 +79,19 @@ class TurnModal extends React.Component {
             <Button
               onClick={this.onSend}
               type="submit"
-              color={button.color}
-              disabled={button.disabled}
+              color="primary"
+              disabled={this.props.isLoading}
               style={{marginLeft: 5, minWidth: 80}}
             >
-              {button.text}
+              {buttonText}
             </Button>
           </ModalFooter>
+
+          { this.props.error &&
+            <ModalError>
+              An issue occured. Give it another try.
+            </ModalError>
+          }
 
         </div>
       </Modal>

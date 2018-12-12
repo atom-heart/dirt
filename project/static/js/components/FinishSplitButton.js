@@ -2,28 +2,31 @@ import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import { dispatchFinishSplit } from '../actions/event-actions.js'
+import { finishSplit } from '../agents/splits-agents.js'
 
 import ProgressButton from './ProgressButton'
 
 class FinishSplitButton extends React.Component {
   constructor(props) {
     super(props)
+    this.split = this.props.splits[this.props.splitId]
     this.finishSplit = this.finishSplit.bind(this)
   }
 
   finishSplit() {
-    this.props.dispatchFinishSplit(this.props.split.id)
+    if (!this.split.isLoading) {
+      this.props.finishSplit(this.split.id)
+    }
   }
 
   render() {
     let btnText
 
-    if (this.props.split.finishRequestLoading) {
+    if (this.split.isLoading) {
       btnText = 'Loading...'
-    } else if (this.props.split.finishRequestError) {
+    } else if (this.split.error) {
       btnText = 'Error occured, click to try again'
-    } else if (this.props.split.last_in_stage) {
+    } else if (this.split.last_in_stage) {
       btnText = 'Finish stage'
     } else {
       btnText = 'Finish split'
@@ -37,10 +40,14 @@ class FinishSplitButton extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => ({
+  splits: state.splits.byId
+})
+
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
-    dispatchFinishSplit
+    finishSplit
   }, dispatch)
 }
 
-export default connect(null, mapDispatchToProps)(FinishSplitButton)
+export default connect(mapStateToProps, mapDispatchToProps)(FinishSplitButton)

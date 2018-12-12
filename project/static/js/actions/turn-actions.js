@@ -1,15 +1,15 @@
-export const SENDING = 'turn:sending'
-export const ERROR = 'turn:error'
+export const IS_LOADING = 'turn:loading'
+export const THROW_ERROR = 'turn:error'
 export const MOUNT_TURN = 'turn:mountTurn'
 export const UPDATE_TIME = 'turn:updateTime'
 export const TOGGLE_DISQ = 'turn:toggleDisq'
 
-export const sending = () => ({
-  type: SENDING
+export const isLoading = () => ({
+  type: IS_LOADING
 })
 
-export const error = () => ({
-  type: ERROR
+export const throwError = () => ({
+  type: THROW_ERROR
 })
 
 export const mountTurn = (data) => ({
@@ -17,9 +17,10 @@ export const mountTurn = (data) => ({
   data
 })
 
-export const updateTime = (time) => ({
+export const updateTime = (interval, value) => ({
   type: UPDATE_TIME,
-  time
+  interval,
+  value
 })
 
 export const toggleDisq = () => ({

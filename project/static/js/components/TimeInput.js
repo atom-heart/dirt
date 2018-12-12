@@ -9,15 +9,24 @@ import { updateTime } from '../actions/turn-actions'
 class TimeInput extends React.Component {
   constructor(props) {
     super(props)
+
+    this.getTimeHandler = this.getTimeHandler.bind(this)
+    this.formatTime = this.formatTime.bind(this)
   }
 
-  getChangeHandler(interval) {
-    function handleChange(event) {
-      const newTime = Object.assign(this.props.time, { [interval]: event.target.value })
-      this.props.updateTime(newTime)
-    }
+  getTimeHandler(interval, max) {
+    function handleTime(event) {
+      const value = parseInt(event.target.value, 10)
 
-    return handleChange
+      if (value <= max) {
+        this.props.updateTime(interval, value)
+      }
+    }
+    return handleTime.bind(this)
+  }
+
+  formatTime(value, maxLength) {
+    return value.toString().padStart(maxLength, '0')
   }
 
   render() {
@@ -25,25 +34,23 @@ class TimeInput extends React.Component {
       <Row className="no-gutters">
         <Col>
           <Input
-            placeholder="00"
-            maxLength="2"
-            onChange={this.getChangeHandler('minutes').bind(this)}
+            autoFocus={true}
+            value={this.formatTime(this.props.time.minutes, 2)}
+            onChange={this.getTimeHandler('minutes', 99)}
             disabled={this.props.disabled}
           />
         </Col>
         <Col style={{marginLeft: 10}}>
           <Input
-            placeholder="00"
-            maxLength="2"
-            onChange={this.getChangeHandler('seconds').bind(this)}
+            value={this.formatTime(this.props.time.seconds, 2)}
+            onChange={this.getTimeHandler('seconds', 99)}
             disabled={this.props.disabled}
           />
         </Col>
         <Col style={{marginLeft: 10}}>
           <Input
-            placeholder="000"
-            maxLength="3"
-            onChange={this.getChangeHandler('milliseconds').bind(this)}
+            value={this.formatTime(this.props.time.milliseconds, 3)}
+            onChange={this.getTimeHandler('milliseconds', 999)}
             disabled={this.props.disabled}
           />
         </Col>

@@ -26,6 +26,45 @@ def index(path):
     return render_template('index.html')
 
 
+@api_blueprint.route('/api/event/<id>')
+def api_event(id):
+    _event = Event.query.get(id)
+
+    game = {'id': _event.game.id, 'name': _event.game.name}
+    car_classes = normalize(('id', 'name'), _event.get_car_classes())
+    players = normalize(('id', 'name', 'order', 'points', 'car_id', 'car_name'), _event.get_players())
+    ranking = get_event_ranking(_event.id)
+
+    stages = {'byId': {}, 'allIds': []}
+
+    for _stage in _event.get_stages():
+        stages['byId'][_stage.id] = {
+            'id': _stage.id,
+            'country': _stage.country,
+            'finished': _stage.finished,
+            'order': _stage.order,
+            'last_in_event': _stage.last_in_event
+        }
+
+        stages['allIds'].append(_stage.id)
+
+    event = {
+        'id': _event.id,
+        'name': _event.name,
+        'finished': _event.finished,
+        'start': _event.start,
+        'game': game,
+        'players': players,
+        'carClasses': car_classes,
+        'ranking': ranking
+    }
+
+    return jsonify({
+        'event': event,
+        'stages': stages
+    }), 200
+
+
 @api_blueprint.route('/api/event/info/<id>')
 def event(id):
     event = Event.query.get(id)
@@ -51,16 +90,21 @@ def event(id):
 
 @api_blueprint.route('/api/split/<id>')
 def api_split(id):
-    split = Split.query.get(id)
-    finished = split.should_finish()
+    _split = Split.query.get(id)
 
-    response = {
-        'finished': finished,
-        'ranking': get_split_ranking(id),
-        'progress': get_split_progress(id) if finished else None
+    split = {
+        'id': _split.id,
+        'order': _split.order,
+        'active': _split.active,
+        'finished': _split.finished,
+        'last_in_stage': _split.last_in_stage,
+        'track': _split.track.name,
+        'weather': _split.weather.conditions,
+        'ranking': get_split_ranking(_split.id),
+        'progress': get_split_progress(id) if _split.finished else None
     }
 
-    return jsonify(response)
+    return jsonify(split), 200
 
 
 @api_blueprint.route('/api/split/ranking/<id>')
@@ -71,13 +115,6 @@ def api_split_ranking(id):
 @api_blueprint.route('/api/split/progress/<id>')
 def api_split_progress(id):
     return jsonify(get_split_progress(id))
-
-
-@api_blueprint.route('/api/stage/<id>')
-def api_stage(id):
-    stage = Stage.query.get(id)
-    print(stage.get_ranking_test())
-    return jsonify(get_stage_ranking(id))
 
 
 @api_blueprint.route('/api/stage/test/<id>')
@@ -111,14 +148,49 @@ def api_stage_test(id):
     })
 
 
+@api_blueprint.route('/api/stage/<id>')
+def api_stage(id):
+    _stage = Stage.query.get(id)
+
+    splits = {'byId': {}, 'allIds': []}
+
+    for _split in _stage.splits.order_by(Split.order).all():
+        split = {
+            'id': _split.id,
+            'stage_id': _stage.id,
+            'order': _split.order,
+            'active': _split.active,
+            'finished': _split.finished,
+            'last_in_stage': _split.last_in_stage,
+            'track': _split.track.name,
+            'weather': _split.weather.conditions,
+            'ranking': get_split_ranking(_split.id)
+        }
+
+        if _split.finished:
+            split['progress'] = get_split_progress(_split.id)
+
+        splits['byId'][_split.id] = split
+        splits['allIds'].append(_split.id)
+
+    # TODO should send only active/finished splits
+
+    stage = {
+        'id': id,
+        'ranking': get_stage_ranking(id),
+        'progress': get_stage_progress(id) if _stage.finished else None
+    }
+
+    return jsonify({
+        'stage': stage,
+        'splits': splits
+    }), 200
+
+
+
 @api_blueprint.route('/api/stage/progress/<id>')
 def api_stage_progress(id):
     return jsonify(get_stage_progress(id))
-
-
-@api_blueprint.route('/api/event/<id>')
-def api_event(id):
-    return jsonify(get_event_ranking(id))
 
 
 def assign_points(stage_rankings, split):
@@ -137,13 +209,14 @@ def api_finish_split():
     split = Split.query.get(args['split_id'])
     split.active = False
 
-    response = {}
+    splits = {'byId': {}, 'allIds': []}
 
-    response = {'splits': [{
+    splits['allIds'].append(split.id)
+    splits['byId'][split.id] = {
         'id': split.id,
-        'active': split.active,
+        'active': False,
         'progress': get_split_progress(split.id)
-    }]}
+    }
 
     if not (split.last_in_stage and split.stage.last_in_event):
         next_split = get_next_split(split)
@@ -151,11 +224,14 @@ def api_finish_split():
 
         db.session.add(next_split)
 
-        response['splits'].append({
+        splits['allIds'].append(next_split.id)
+        splits['byId'][next_split.id] = {
             'id': next_split.id,
-            'active': next_split.active,
+            'active': True,
             'ranking': get_split_ranking(next_split.id)
-        })
+        }
+
+    response = {'splits': splits}
 
     if split.last_in_stage:
         split.stage.finished = True
@@ -187,7 +263,6 @@ def api_finish_split():
     db.session.commit()
 
     return jsonify(response), 200
-
 
 @api_blueprint.route('/api/time', methods=['PUT'])
 def api_add_time_v2():

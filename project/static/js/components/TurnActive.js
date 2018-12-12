@@ -24,9 +24,7 @@ class TurnActive extends React.Component {
 
     if (this.props.player.time) {
       turnData.time = strToTime(this.props.player.time)
-    }
-
-    if (this.props.player.disqualified) {
+    } else if (this.props.player.disqualified) {
       turnData.disqualified = true
     }
 

@@ -2,14 +2,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { fetchStage, reloadStage } from '../actions/event-actions.js'
+import { fetchStage } from '../agents/stages-agents'
 
 import { Card } from 'reactstrap'
 
+import Split from './Split'
 import TableHeader from './TableHeader'
 import StageRanking from './StageRanking'
 import StageProgress from './StageProgress'
-import Split from './Split'
 import ProgressButton from './ProgressButton'
 import StageFinishedFooter from './StageFinishedFooter'
 
@@ -18,77 +18,83 @@ class Stage extends React.Component {
     super(props)
     this.state = { showProgress: false }
 
-    this.reloadStage = this.reloadStage.bind(this)
+    this.loadStage = this.loadStage.bind(this)
     this.toggleProgress = this.toggleProgress.bind(this)
   }
 
-  reloadStage(event) {
-    event.preventDefault()
-    this.props.reloadStage(this.props.match.params.stageId)
+  loadStage() {
+    this.props.fetchStage(this.stage.id)
   }
 
-  toggleProgress(event) {
+  toggleProgress() {
     this.setState({ showProgress: !this.state.showProgress })
   }
 
   componentDidMount() {
-    if (this.currentStage && !this.currentStage.loaded) {
-      this.props.fetchStage(this.props.match.params.stageId)
+    if (
+      this.stage &&
+      !this.stage.isLoading &&
+      !this.stage.hasLoaded
+    ) {
+      this.loadStage()
     }
   }
 
   componentDidUpdate() {
-    if (this.currentStage && !this.currentStage.loaded && !this.currentStage.error) {
-      this.props.fetchStage(this.props.match.params.stageId)
+    if (
+      this.stage &&
+      !this.stage.isLoading &&
+      !this.stage.hasLoaded &&
+      !this.stage.error
+    ) {
+      this.loadStage()
     }
   }
 
   render() {
-    this.currentStage = this.props.stages.find(stage => {
-      return stage.id == this.props.match.params.stageId
-    })
+    this.stage = this.props.stages[this.props.match.params.stageId]
 
-    if (!this.currentStage) {
+    if (!this.stage) {
       return <div>No such stage.</div>
     }
 
-    else if (this.currentStage.error) {
-      return <div>Error loading stage data. <a href="#" onClick={this.reloadStage}>Click here</a> to try again.</div>
+    else if (this.stage.error) {
+      return <div>Error loading stage data. <a href="#" onClick={this.loadStage}>Click here</a> to try again.</div>
     }
 
-    else if (this.currentStage.isLoading) {
+    else if (this.stage.isLoading || !this.stage.hasLoaded) {
       return <div>Loading...</div>
     }
 
     else {
-      let stageRanking = this.state.showProgress ? (
-        <StageProgress ranking={this.currentStage.progress} />
-      ) : (
-        <StageRanking ranking={this.currentStage.ranking} />
-      )
-
-      let currentStageSplits = this.props.splits.filter(split => (
-        split.stage_id == this.props.match.params.stageId
-      ))
-
-      let splits = currentStageSplits.map(split => (
-        <Split split={split} key={split.id} />
-      ))
+      const splits = this.props.splitIds.filter(id => {
+        const split = this.props.splits[id]
+        return split.stage_id == this.props.match.params.stageId
+      }).map(id => {
+        const split = this.props.splits[id]
+        return <Split split={split} key={split.id} />
+      })
 
       return (
         <div>
           <Card>
 
             <TableHeader>
-              <h4>{this.currentStage.country}</h4>
+              <h4>
+                {this.stage.country}
+              </h4>
               <span className="text-muted weather">
-                {this.currentStage.finished ? 'Finished' : 'In progress'}
+                {this.stage.finished ? 'Finished' : 'In progress'}
               </span>
             </TableHeader>
 
-            {this.currentStage.finished &&
+            {this.stage.finished &&
               <div>
-                {stageRanking}
+                {this.state.showProgress ? (
+                  <StageProgress ranking={this.stage.progress} />
+                ) : (
+                  <StageRanking ranking={this.stage.ranking} />
+                )}
                 <ProgressButton onClick={this.toggleProgress}>
                   {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
                 </ProgressButton>
@@ -101,13 +107,12 @@ class Stage extends React.Component {
 
           {splits}
 
-          {this.currentStage.finished &&
+          {this.stage.finished &&
             <div>
               <hr />
               <StageFinishedFooter />
             </div>
           }
-
         </div>
       )
     }
@@ -115,15 +120,15 @@ class Stage extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  stages: state.event.stages,
-  splits: state.event.splits,
+  stages: state.stages.byId,
+  splits: state.splits.byId,
+  splitIds: state.splits.allIds,
   players: state.event.players
 })
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
-    fetchStage,
-    reloadStage
+    fetchStage
   }, dispatch)
 }
 

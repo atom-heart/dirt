@@ -5,23 +5,14 @@ const initialState = {
 }
 
 export const modalReducer = (state = initialState, action) => {
-  const newState = Object.assign({}, state)
-
   switch (action.type) {
+    case SHOW_MODAL:
+      return Object.assign({}, state, { modalType: action.modalType })
 
-  case SHOW_MODAL:
-    newState.modalType = action.modalType
-    break
+    case HIDE_MODAL:
+      return initialState
 
-  case HIDE_MODAL:
-    return {
-      modalType: null
-    }
-
-  default:
-    return state
-
+    default:
+      return state
   }
-
-  return newState
 }

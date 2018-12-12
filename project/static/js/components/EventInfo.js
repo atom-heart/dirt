@@ -10,17 +10,9 @@ import Modal from './Modal'
 
 class EventInfo extends React.Component {
   render() {
-    let players = this.props.players.map((player) => (
-      <li key={player.id}>{player.name}</li>
-    ))
-
-    let carClasses = this.props.carClasses.map((carClass) => (
-      <li key={carClass.id}>{carClass.name}</li>
-    ))
-
     return (
       <div>
-        
+
         <Card>
           <TableHeader>
             <h4>{this.props.finished ? 'Event finished' : 'Event in progress'}</h4>
@@ -44,7 +36,6 @@ class EventInfo extends React.Component {
         </Card>
 
         <hr />
-
 
         {this.props.finished ? (
           <Card>

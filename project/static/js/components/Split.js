@@ -49,7 +49,7 @@ class Split extends React.Component {
         {(this.props.split.active || this.props.split.finished) && ranking}
 
         {(this.props.split.finished && this.props.split.active) &&
-          <FinishSplitButton split={this.props.split} />
+          <FinishSplitButton splitId={this.props.split.id} />
         }
 
         {(this.props.split.finished && !this.props.split.active) &&

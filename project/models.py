@@ -137,11 +137,11 @@ class Split(db.Model):
             .filter(Split.stage_id == self.stage_id)\
             .filter(Split.id == self.id)\
             .order_by(
-                case([(Time.time != None, 0),], else_=1),
+                case([(Time.time.isnot(None), 0),], else_=1),
                 Time.time,
-                case([(Time.disqualified == True, 1),
-                    (StageRanking.disqualified == True, 2)],
-                    else_=0),
+                case([(Time.disqualified == True, 0),
+                    (StageRanking.disqualified == True, 1)],
+                    else_=2),
                 EventPlayer.order)\
             .all()
 
@@ -317,7 +317,7 @@ class Event(db.Model):
     def get_stages(self):
         return db.session.query(
                 Stage.id,
-                Country.name,
+                Country.name.label('country'),
                 Stage.finished,
                 Stage.order,
                 Stage.last_in_event)\

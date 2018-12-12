@@ -19,14 +19,12 @@ def add_positions(ranking):
             player['position'] = prev['position']
 
         # Same position for all disqualified
-        elif player['disqualified'] and prev['disqualified']:
+        elif prev and player['disqualified'] and prev['disqualified']:
             player['position'] = prev['position']
 
-        elif 'stage_disqualified' in player and (player['disqualified'] or player['stage_disqualified']) and (player['disqualified'] or player['stage_disqualified']):
+        elif prev and 'stage_disqualified' in player and (player['disqualified'] or player['stage_disqualified']) and (prev['disqualified'] or prev['stage_disqualified']):
             player['position'] = prev['position']
 
-        # Base case
-        # elif player['time'] or player['disqualified']:
         else:
             player['position'] = pos
 
