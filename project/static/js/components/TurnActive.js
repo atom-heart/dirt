@@ -18,8 +18,9 @@ class TurnActive extends React.Component {
 
   openModal() {
     let turnData = {
-      player: { id: this.props.player.id, name: this.props.player.name },
-      split: { id: this.props.split.id, track: this.props.split.track }
+      turnId: this.props.player.turn_id,
+      player: this.props.player.name,
+      track: this.props.split.track
     }
 
     if (this.props.player.time) {

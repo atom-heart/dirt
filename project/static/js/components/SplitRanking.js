@@ -22,7 +22,7 @@ const SplitRanking = (props) => {
   props.split.ranking.disqualified.forEach(player => {
     ranking.push(
       <Turn key={player.id} split={props.split} player={player}>
-        <td>{player.position}</td>
+        <td>–</td>
         <td>{player.name}</td>
         <td colSpan="2">disqualified</td>
       </Turn>
@@ -32,7 +32,7 @@ const SplitRanking = (props) => {
   props.split.ranking.stage_disqualified.forEach(player => {
     ranking.push(
       <TurnInactive key={player.id}>
-        <td>{player.position}</td>
+        <td>–</td>
         <td>{player.name}</td>
         <td colSpan="2">previously disqualified</td>
       </TurnInactive>

@@ -7,7 +7,7 @@ export const fetchStage = id => {
   return dispatch => {
     dispatch(isLoading(id))
 
-    fetch(`${BASE_URL}api/stage/${id}`)
+    fetch(`${BASE_URL}api/stages/${id}`)
       .then(res => res.json())
       .then(
         (response) => {

@@ -4,17 +4,16 @@ import { isLoading, throwError } from '../actions/turn-actions'
 import { updateSplit } from '../actions/splits-actions'
 import { hideModal } from '../actions/modal-actions'
 
-export const sendTurn = data => {
+export const sendTurn = ({ turnId, time, disqualified }) => {
   return dispatch => {
     dispatch(isLoading())
 
-    fetch(`${BASE_URL}api/time`, {
+    fetch(`${BASE_URL}api/turns/${turnId}`, {
       method: 'PUT',
-      body: JSON.stringify(data),
+      body: JSON.stringify({ time, disqualified }),
       headers: {
-        'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
+      }
     })
       .then(res => res.json())
       .then(

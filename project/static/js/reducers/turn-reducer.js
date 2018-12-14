@@ -9,14 +9,9 @@ import {
 const initialState = {
   isLoading: false,
   error: false,
-  player: {
-    id: null,
-    name: null
-  },
-  split: {
-    id: null,
-    track: null
-  },
+  turnId: null,
+  player: null,
+  track: null,
   time: {
     minutes: 0,
     seconds: 0,

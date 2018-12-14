@@ -37,10 +37,9 @@ class TurnModal extends React.Component {
     e.preventDefault()
 
     this.props.sendTurn({
-      action: this.props.disqualified ? 'DISQUALIFY' : 'ADD_TIME',
+      turnId: this.props.turnId,
       time: this.props.disqualified ? null : timeToStr(this.props.time),
-      player_id: this.props.player.id,
-      split_id: this.props.split.id
+      disqualified: this.props.disqualified
     })
   }
 
@@ -53,9 +52,9 @@ class TurnModal extends React.Component {
 
           <ModalHeader>
             <div>
-              <h5 className="modal-title">{this.props.player.name}</h5>
+              <h5 className="modal-title">{this.props.player}</h5>
               <span className="text-muted">
-                {this.props.split.track}
+                {this.props.track}
               </span>
             </div>
             <ModalCloseButton onClick={this.onClose} />

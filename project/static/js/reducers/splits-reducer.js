@@ -1,56 +1,31 @@
 import { combineReducers } from 'redux'
-import { compStates } from '../component-states'
+import { compStates, setCompState } from '../component-states'
 
 import {
+  LOAD_SPLITS,
   UPDATE_SPLIT,
   UPDATE_SPLITS,
-  LOAD_SPLITS,
   IS_LOADING,
   THROW_ERROR
 } from '../actions/splits-actions'
 
-const updateSplit = (state, action) => {
-  const split = Object.assign(
-    state[action.split.id],
-    action.split
-  )
-  return Object.assign({}, state, {
-    [action.split.id]: split
-  })
+function loadSplits(state, action) {
+  const splits = Object.assign({}, ...action.splits.map(split => (
+    { [split.id]: Object.assign(split, compStates.idle) }
+  )))
+  return Object.assign({}, state, splits)
+}
+
+function updateSplit(state, action) {
+  const split = Object.assign(state[action.split.id], action.split)
+  return Object.assign({}, state, { [action.split.id]: split })
 }
 
 function updateSplits(state, action) {
-  const splits = {}
-
-  action.splits.allIds.forEach(id => {
-    splits[id] = Object.assign({},
-      state[id],
-      action.splits.byId[id],
-      compStates.idle
-    )
-  })
-
+  const splits = Object.assign({}, ...action.splits.map(split => (
+    { [split.id]: Object.assign(state[split.id], split, compStates.idle) }
+  )))
   return Object.assign({}, state, splits)
-}
-
-function loadSplits(state, action) {
-  const splits = action.splits.byId
-
-  action.splits.allIds.forEach(id => {
-    splits[id] = Object.assign(splits[id], compStates.idle)
-  })
-
-  return Object.assign({}, state, splits)
-}
-
-function setSplitState(state, action, compState) {
-  const split = Object.assign(
-    state[action.splitId],
-    compState
-  )
-  return Object.assign({}, state, {
-    [action.splitId]: split
-  })
 }
 
 const splitsById = (state = {}, action) => {
@@ -65,10 +40,10 @@ const splitsById = (state = {}, action) => {
       return loadSplits(state, action)
 
     case IS_LOADING:
-      return setSplitState(state, action, compStates.isLoading)
+      return setCompState(state, action.splitId, compStates.isLoading)
 
     case THROW_ERROR:
-      return setSplitState(state, action, compStates.error)
+      return setCompState(state, action.splitId, compStates.error)
 
     default:
       return state
@@ -78,7 +53,7 @@ const splitsById = (state = {}, action) => {
 const allSplits = (state = [], action) => {
   switch (action.type) {
     case LOAD_SPLITS:
-      return state.concat(action.splits.allIds)
+      return state.concat(action.splits.map(split => split.id))
 
     default:
       return state

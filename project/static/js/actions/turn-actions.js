@@ -1,6 +1,6 @@
 export const IS_LOADING = 'turn:loading'
 export const THROW_ERROR = 'turn:error'
-export const MOUNT_TURN = 'turn:mountTurn'
+export const MOUNT_TURN = 'turn:mount'
 export const UPDATE_TIME = 'turn:updateTime'
 export const TOGGLE_DISQ = 'turn:toggleDisq'
 

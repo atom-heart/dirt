@@ -1,9 +1,9 @@
 from project.models import Split, Stage, Event
-from project.api.helpers import group_players_ranking, add_positions, add_pos_diffs, add_time_diffs, format_times_diffs, group_players, add_stage_positions, normalize
+from project.api.helpers import add_points, group_players_ranking, add_positions, add_pos_diffs, add_time_diffs, format_times_diffs, group_players, add_stage_positions, normalize
 
 def get_split_ranking(id):
     _split = Split.query.get(id)
-    keys = ('id', 'name', 'time', 'disqualified', 'stage_disqualified')
+    keys = ('id', 'name', 'turn_id', 'time', 'disqualified', 'stage_disqualified')
 
     ranking = normalize(keys, _split.get_ranking())
     ranking = add_positions(ranking)
@@ -74,3 +74,14 @@ def get_event_ranking(id):
     event = add_stage_positions(event)
 
     return event
+
+
+def assign_points(stage_ranking, split):
+    keys = ('id', 'name', 'time', 'disqualified')
+
+    split_progress = normalize(keys, split.get_progress())
+    split_progress = add_positions(split_progress)
+    split_progress = add_points(split_progress)
+
+    for player in stage_ranking:
+        player.points = split_progress[player.player_id]

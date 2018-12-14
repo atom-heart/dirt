@@ -123,6 +123,7 @@ class Split(db.Model):
         return db.session.query(
                 Player.id,
                 Player.name,
+                Time.id,
                 Time.time,
                 Time.disqualified,
                 StageRanking.disqualified)\
@@ -206,27 +207,31 @@ class Time(db.Model):
 # Many-to-many relationships ##########################################
 
 class EventPlayer(db.Model):
-    __tablename__ = 'events_players'
+    __tablename__ = 'event_players'
 
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), primary_key=True)
     order = db.Column(db.Integer, nullable=False)
     car_id = db.Column(db.Integer, db.ForeignKey('cars.id'))
     points = db.Column(db.Integer, nullable=False, default=0)
+
+    __table_args__ = (db.PrimaryKeyConstraint(player_id, event_id),)
 
     # Relationships
     car = db.relationship('Car')
 
 
 class StageRanking(db.Model):
-    __tablename__ = 'stages_rankings'
+    __tablename__ = 'stage_rankings'
 
-    stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'), primary_key=True)
     player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
+    stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'), primary_key=True)
     time_total = db.Column(db.Interval, nullable=False, default=td())
     points = db.Column(db.Integer, nullable=False, default=0)
     disqualified = db.Column(db.Boolean, nullable=False, default=False)
     win_by_disq = db.Column(db.Boolean, nullable=False, default=False)
+
+    __table_args__ = (db.PrimaryKeyConstraint(player_id, stage_id),)
 
     # Relationships
     player = db.relationship('Player')
@@ -301,16 +306,13 @@ class Event(db.Model):
                 Player.id,
                 Player.name,
                 EventPlayer.order,
-                EventPlayer.points,
                 Car.id,
                 Car.name)\
             .join(EventPlayer, and_(
                 EventPlayer.event_id == self.id,
                 EventPlayer.player_id == Player.id))\
             .join(Car, Car.id == EventPlayer.car_id)\
-            .order_by(
-                EventPlayer.points,
-                EventPlayer.order)\
+            .order_by(EventPlayer.order)\
             .all()
 
 

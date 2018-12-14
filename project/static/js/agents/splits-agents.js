@@ -8,14 +8,7 @@ export const finishSplit = splitId => {
   return dispatch => {
     dispatch(isLoading(splitId))
 
-    fetch(`${BASE_URL}api/finish_split`, {
-      method: 'PUT',
-      body: JSON.stringify({ split_id: splitId }),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
-    })
+    fetch(`${BASE_URL}api/splits/${splitId}/finish`, { method: 'PUT' })
       .then(res => res.json())
       .then(
         response => {

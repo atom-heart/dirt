@@ -1,12 +1,19 @@
 import { combineReducers } from 'redux'
-import { compStates } from '../component-states.js'
+import { compStates, setCompState } from '../component-states.js'
 
 import {
-  UPDATE_STAGE,
   LOAD_STAGES,
+  UPDATE_STAGE,
   THROW_ERROR,
   IS_LOADING
 } from '../actions/stages-actions'
+
+function loadStages(state, action) {
+  const stages = Object.assign({}, ...action.stages.map(stage => (
+    { [stage.id]: Object.assign(stage, compStates.idle) }
+  )))
+  return Object.assign({}, state, stages)
+}
 
 function updateStage(state, action) {
   const stage = Object.assign(
@@ -14,29 +21,7 @@ function updateStage(state, action) {
     action.stage,
     compStates.hasLoaded
   )
-  return Object.assign({}, state, {
-    [action.stage.id]: stage
-  })
-}
-
-function setStageState(state, action, compState) {
-  const stage = Object.assign(
-    state[action.stageId],
-    compState
-  )
-  return Object.assign({}, state, {
-    [action.stageId]: stage
-  })
-}
-
-function loadStages(state, action) {
-  const stages = action.stages.byId
-
-  action.stages.allIds.forEach(id => {
-    stages[id] = Object.assign(stages[id], compStates.idle)
-  })
-
-  return Object.assign({}, state, stages)
+  return Object.assign({}, state, { [action.stage.id]: stage })
 }
 
 const stagesById = (state = {}, action) => {
@@ -48,10 +33,10 @@ const stagesById = (state = {}, action) => {
       return loadStages(state, action)
 
     case THROW_ERROR:
-      return setStageState(state, action, compStates.error)
+      return setCompState(state, action.stageId, compStates.error)
 
     case IS_LOADING:
-      return setStageState(state, action, compStates.isLoading)
+      return setCompState(state, action.stageId, compStates.isLoading)
 
     default:
       return state
@@ -61,7 +46,7 @@ const stagesById = (state = {}, action) => {
 const allStages = (state = [], action) => {
   switch (action.type) {
     case LOAD_STAGES:
-      return state.concat(action.stages.allIds)
+      return state.concat(action.stages.map(stage => stage.id))
 
     default:
       return state

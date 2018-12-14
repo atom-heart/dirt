@@ -1,6 +1,6 @@
 from os import path, curdir
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -26,3 +26,13 @@ from project.api.views import api_blueprint
 
 # Register
 app.register_blueprint(api_blueprint)
+
+
+#### React entry point ################################################
+#######################################################################
+
+# http://flask.pocoo.org/snippets/57/
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def index(path):
+    return render_template('index.html')

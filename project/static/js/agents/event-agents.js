@@ -7,7 +7,7 @@ export const fetchEvent = id => {
   return dispatch => {
     dispatch(isLoading())
 
-    fetch(`${BASE_URL}api/event/${id}`)
+    fetch(`${BASE_URL}api/events/${id}`)
       .then(res => res.json())
       .then(
         (response) => {

@@ -18,8 +18,8 @@ const SplitProgress = props => {
   props.ranking.disqualified.forEach(player => {
     ranking.push(
       <tr key={player.id}>
-        <td>{player.position}</td>
-        <td>{player.position_diff}</td>
+        <td>–</td>
+        <td>–</td>
         <td>{player.name}</td>
         <td colSpan="2">disqualified</td>
       </tr>
