@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Route } from 'react-router-dom'
 
-import { fetchEventData, isLoading, reloadEvent } from '../actions/event-actions.js'
 import { fetchEvent } from '../agents/event-agents'
 
 import Sidebar from './Sidebar'
@@ -58,7 +57,7 @@ class Event extends React.Component {
             />
             <Route
               exact
-              path={`/event/${this.eventId}/:stageId`}
+              path={`/event/${this.eventId}/:stageOrder`}
               component={Stage}
             />
           </div>

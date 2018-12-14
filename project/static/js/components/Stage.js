@@ -18,8 +18,16 @@ class Stage extends React.Component {
     super(props)
     this.state = { showProgress: false }
 
+    this.selectStage = this.selectStage.bind(this)
     this.loadStage = this.loadStage.bind(this)
     this.toggleProgress = this.toggleProgress.bind(this)
+  }
+
+  selectStage() {
+    const selectedStageId = Object.keys(this.props.stages).find(id => (
+      this.props.stages[id].order === parseInt(this.props.match.params.stageOrder, 10)
+    ))
+    this.stage = this.props.stages[selectedStageId]
   }
 
   loadStage() {
@@ -52,7 +60,7 @@ class Stage extends React.Component {
   }
 
   render() {
-    this.stage = this.props.stages[this.props.match.params.stageId]
+    this.selectStage()
 
     if (!this.stage) {
       return <div>No such stage.</div>
@@ -69,7 +77,7 @@ class Stage extends React.Component {
     else {
       const splits = this.props.splitIds.filter(id => {
         const split = this.props.splits[id]
-        return split.stage_id == this.props.match.params.stageId
+        return split.stage_id == this.stage.id
       }).map(id => {
         const split = this.props.splits[id]
         return <Split split={split} key={split.id} />

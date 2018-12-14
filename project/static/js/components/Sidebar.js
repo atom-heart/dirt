@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Link, NavLink } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 
 import NavSection from './NavSection'
 
@@ -12,7 +12,7 @@ class Sidebar extends React.Component {
       return (
         <li className="nav-item" key={stage.id}>
           <NavLink
-            to={`/event/${this.props.eventId}/${stage.id}`}
+            to={`/event/${this.props.eventId}/${stage.order}`}
             className="nav-link"
           >
             {stage.country}
