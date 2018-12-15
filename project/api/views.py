@@ -112,11 +112,15 @@ def api_finish_split(id):
         next_split = get_next_split(_split)
         next_split.active = True
 
+        # Next split will automatically finish when all players are disqualified
+        next_split.finished = next_split.should_finish()
+
         db.session.add(next_split)
 
         response['splits'].append({
             'id': next_split.id,
             'active': True,
+            'finished': next_split.finished,
             'ranking': get_split_ranking(next_split.id)
         })
 

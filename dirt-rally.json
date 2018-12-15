@@ -1,0 +1,589 @@
+{
+  "game": {
+    "name": "DiRT Rally",
+    "countries": {
+      "Greece": {
+        "weather": [
+          {
+            "conditions": "Morning/Clear",
+            "favorable": true
+          },
+          {
+            "conditions": "Night/Clear",
+            "favorable": false
+          },
+          {
+            "conditions": "Sunset/Clear",
+            "favorable": true
+          },
+          {
+            "conditions": "Midday/Sunny",
+            "favorable": true
+          }
+        ],
+        "stages": [
+          {
+            "name": "Pedines Epidaxi",
+            "length": 6590,
+            "type": "short"
+          },
+          {
+            "name": "Anodou Farmakas",
+            "length": 9600,
+            "type": "long"
+          },
+          {
+            "name": "Kathodo Leontiou",
+            "length": 9600,
+            "type": "long"
+          },
+          {
+            "name": "Pomona Ekrixi",
+            "length": 5090,
+            "type": "short"
+          },
+          {
+            "name": "Ampelonas Ormi",
+            "length": 4800,
+            "type": "short"
+          },
+          {
+            "name": "Koryfi Dafni",
+            "length": 4500,
+            "type": "short"
+          },
+          {
+            "name": "Fourketa Kourva",
+            "length": 4500,
+            "type": "short"
+          },
+          {
+            "name": "Perasma Platani",
+            "length": 10690,
+            "type": "long"
+          },
+          {
+            "name": "Tsiristra Thea",
+            "length": 10360,
+            "type": "long"
+          },
+          {
+            "name": "Ourea Spevsi",
+            "length": 5740,
+            "type": "short"
+          },
+          {
+            "name": "Ypsona tou Dasos",
+            "length": 5380,
+            "type": "short"
+          },
+          {
+            "name": "Abies Koilada",
+            "length": 7090,
+            "type": "short"
+          }
+        ]
+      },
+      "Wales": {
+        "weather": [
+          {
+            "conditions": "Midday/Cloudy",
+            "favorable": true
+          },
+          {
+            "conditions": "Afternoon/Overcast",
+            "favorable": true
+          },
+          {
+            "conditions": "Morning/Rain",
+            "favorable": false
+          },
+          {
+            "conditions": "Morning/Overcast",
+            "favorable": true
+          },
+          {
+            "conditions": "Night/Rain",
+            "favorable": false
+          },
+          {
+            "conditions": "Night/Overcast",
+            "favorable": false
+          }
+        ],
+        "stages": [
+          {
+            "name": "Fferm Wynt",
+            "length": 5700,
+            "type": "short"
+          },
+          {
+            "name": "Fferm Wynt Reverse",
+            "length": 5700,
+            "type": "short"
+          },
+          {
+            "name": "Dyffryn Afon",
+            "length": 5700,
+            "type": "short"
+          },
+          {
+            "name": "Dyffryn Afon Reverse",
+            "length": 5700,
+            "type": "short"
+          },
+          {
+            "name": "Sweet Lamb",
+            "length": 9900,
+            "type": "long"
+          },
+          {
+            "name": "Geufron Forest",
+            "length": 10000,
+            "type": "long"
+          },
+          {
+            "name": "Pant Mawr",
+            "length": 4700,
+            "type": "short"
+          },
+          {
+            "name": "Pant Mawr Reverse",
+            "length": 4700,
+            "type": "short"
+          },
+          {
+            "name": "Bidno Moorland",
+            "length": 4900,
+            "type": "short"
+          },
+          {
+            "name": "Bidno Moorland Reverse",
+            "length": 4900,
+            "type": "short"
+          },
+          {
+            "name": "River Severn Valley",
+            "length": 11400,
+            "type": "long"
+          },
+          {
+            "name": "Bronfelen",
+            "length": 11400,
+            "type": "long"
+          }
+        ]
+      },
+      "Monaco": {
+        "weather": [
+          {
+            "conditions": "Midday/Sunny",
+            "favorable": true
+          },
+          {
+            "conditions": "Afternoon/Cloudy",
+            "favorable": true
+          },
+          {
+            "conditions": "Afternoon/Snow",
+            "favorable": false
+          },
+          {
+            "conditions": "Afternoon/Mist",
+            "favorable": true
+          },
+          {
+            "conditions": "Night/Snow",
+            "favorable": false
+          },
+          {
+            "conditions": "Night/Wet",
+            "favorable": false
+          }
+        ],
+        "stages": [
+          {
+            "name": "Route de Turini Montee",
+            "length": 6840,
+            "type": "short"
+          },
+          {
+            "name": "Route de Turini Descente",
+            "length": 4020,
+            "type": "short"
+          },
+          {
+            "name": "Approche du Col Turini - Montee",
+            "length": 3950,
+            "type": "short"
+          },
+          {
+            "name": "Gordolon - Corte Montee",
+            "length": 5180,
+            "type": "short"
+          },
+          {
+            "name": "Col de Turini - Descente",
+            "length": 5180,
+            "type": "short"
+          },
+          {
+            "name": "Col de Turini - Sprint en Montee",
+            "length": 4730,
+            "type": "short"
+          },
+          {
+            "name": "Col de Turini - Sprint en Descente",
+            "length": 4730,
+            "type": "short"
+          },
+          {
+            "name": "Col de Turini - Depart en Descente",
+            "length": 6800,
+            "type": "short"
+          },
+          {
+            "name": "Pra d'Alart",
+            "length": 9830,
+            "type": "long"
+          },
+          {
+            "name": "Col de Turini - Depart",
+            "length": 9830,
+            "type": "long"
+          },
+          {
+            "name": "Vallee Descendante",
+            "length": 10870,
+            "type": "long"
+          },
+          {
+            "name": "Route de Turini",
+            "length": 10810,
+            "type": "long"
+          }
+        ]
+      },
+      "Germany": {
+        "weather": [
+          {
+            "conditions": "Morning/Clear",
+            "favorable": true
+          },
+          {
+            "conditions": "Night/Clear",
+            "favorable": false
+          },
+          {
+            "conditions": "Morning/Rain",
+            "favorable": false
+          },
+          {
+            "conditions": "Morning/Overcast",
+            "favorable": false
+          },
+          {
+            "conditions": "Midday/Clear",
+            "favorable": true
+          }
+        ],
+        "stages": [
+          {
+            "name": "Waldabstieg",
+            "length": 6020,
+            "type": "short"
+          },
+          {
+            "name": "Kreuzungsring",
+            "length": 6320,
+            "type": "short"
+          },
+          {
+            "name": "Kreuzungsring Reverse",
+            "length": 5690,
+            "type": "short"
+          },
+          {
+            "name": "Verbundsring",
+            "length": 5860,
+            "type": "short"
+          },
+          {
+            "name": "Verbundsring Reverse",
+            "length": 5550,
+            "type": "short"
+          },
+          {
+            "name": "Flugzeugring",
+            "length": 4940,
+            "type": "short"
+          },
+          {
+            "name": "Flugzeugring Reverse",
+            "length": 5130,
+            "type": "short"
+          },
+          {
+            "name": "Waldaufstieg",
+            "length": 5390,
+            "type": "short"
+          },
+          {
+            "name": "Ruschberg",
+            "length": 10700,
+            "type": "long"
+          },
+          {
+            "name": "Frauenberg",
+            "length": 11670,
+            "type": "long"
+          },
+          {
+            "name": "Oberstein",
+            "length": 11680,
+            "type": "long"
+          },
+          {
+            "name": "Hammerstein",
+            "length": 10810,
+            "type": "long"
+          }
+        ]
+      },
+      "Finland": {
+        "weather": [
+          {
+            "conditions": "Night/Clear",
+            "favorable": false
+          },
+          {
+            "conditions": "Midday/Sunny",
+            "favorable": true
+          },
+          {
+            "conditions": "Morning/Rain",
+            "favorable": false
+          },
+          {
+            "conditions": "Morning/Overcast",
+            "favorable": true
+          },
+          {
+            "conditions": "Afternoon/Clear",
+            "favorable": true
+          }
+        ],
+        "stages": [
+          {
+            "name": "Iso Oksjarvi",
+            "length": 8040,
+            "type": "short"
+          },
+          {
+            "name": "Oksala",
+            "length": 8050,
+            "type": "short"
+          },
+          {
+            "name": "Kotajarvi",
+            "length": 8100,
+            "type": "short"
+          },
+          {
+            "name": "Jarvenkyla",
+            "length": 8100,
+            "type": "short"
+          },
+          {
+            "name": "Kontinjarvi",
+            "length": 15050,
+            "type": "long"
+          },
+          {
+            "name": "Hamelahti",
+            "length": 14960,
+            "type": "long"
+          },
+          {
+            "name": "Kailajarvi",
+            "length": 7510,
+            "type": "short"
+          },
+          {
+            "name": "Paskuri",
+            "length": 7550,
+            "type": "short"
+          },
+          {
+            "name": "Naarajarvi",
+            "length": 7430,
+            "type": "short"
+          },
+          {
+            "name": "Jyrkysjarvi",
+            "length": 7340,
+            "type": "short"
+          },
+          {
+            "name": "Kakaristo",
+            "length": 16200,
+            "type": "long"
+          },
+          {
+            "name": "Pirkajarvi",
+            "length": 16200,
+            "type": "long"
+          }
+        ]
+      },
+      "Sweden": {
+        "weather": [
+          {
+            "conditions": "Midday/Sunny",
+            "favorable": true
+          },
+          {
+            "conditions": "Night/Overcast",
+            "favorable": false
+          },
+          {
+            "conditions": "Afternoon/Cloudy",
+            "favorable": true
+          },
+          {
+            "conditions": "Afternoon/Snow",
+            "favorable": false
+          },
+          {
+            "conditions": "Afternoon/Mist",
+            "favorable": true
+          },
+          {
+            "conditions": "Night/Snow",
+            "favorable": false
+          },
+          {
+            "conditions": "Night/Mist",
+            "favorable": false
+          }
+        ],
+        "stages": [
+          {
+            "name": "Lysvik",
+            "length": 12100,
+            "type": "long"
+          },
+          {
+            "name": "Norraskoga",
+            "length": 11500,
+            "type": "long"
+          },
+          {
+            "name": "Algsjon Sprint",
+            "length": 5240,
+            "type": "short"
+          },
+          {
+            "name": "Elgsjon",
+            "length": 7000,
+            "type": "short"
+          },
+          {
+            "name": "Skogsrally",
+            "length": 4800,
+            "type": "short"
+          },
+          {
+            "name": "Algsjon",
+            "length": 7000,
+            "type": "short"
+          },
+          {
+            "name": "Ostra Hinnsjon",
+            "length": 4900,
+            "type": "short"
+          },
+          {
+            "name": "Stor-jangen Sprint",
+            "length": 6600,
+            "type": "short"
+          },
+          {
+            "name": "Stor-jangen Sprint Reverse",
+            "length": 6600,
+            "type": "short"
+          },
+          {
+            "name": "Bjorklangen",
+            "length": 4900,
+            "type": "short"
+          },
+          {
+            "name": "Ransbysater",
+            "length": 11900,
+            "type": "long"
+          },
+          {
+            "name": "Hamra",
+            "length": 12100,
+            "type": "long"
+          }
+        ]
+      }
+    },
+    "cars": {
+      "1960s": [
+        "Mini Cooper S",
+        "Lancia Fulvia HF"
+      ],
+      "1970s": [
+        "Renault Alpine A110",
+        "Opel Kadett GT/E 16v",
+        "Fiat 131 Abarth",
+        "Ford Escort Mk II",
+        "Lancia Stratos"
+      ],
+      "1980s": [
+        "BMW E30 M3 Evo Rally",
+        "Ford Sierra Cosworth RS500"
+      ],
+      "Group B (4WD)": [
+        "Renault 5 Turbo",
+        "MG Metro 6R4",
+        "Audi Sport quattro Rally",
+        "Ford RS200",
+        "Peugeot 205 T16 Evo 2",
+        "Lancia Delta S4"
+      ],
+      "Group B (RWD)": [
+        "Opel Manta 400",
+        "Lancia 037 Evo 2"
+      ],
+      "Group A": [
+        "Ford Escort RS Cosworth",
+        "Subaru Impreza 1995",
+        "Lancia Delta HF Integrale"
+      ],
+      "F2 Kit Car": [
+        "SEAT Ibiza Kitcar",
+        "Peugeot 306 Maxi"
+      ],
+      "R4": [
+        "Subaru Impreza WRX STI 2011",
+        "Mitsubishi Lancer Evolution X"
+      ],
+      "2000s": [
+        "Ford Focus RS Rally 2001",
+        "Subaru Impreza 2001",
+        "Ford Focus RS Rally 2007",
+        "Citroen C4 Rally 2010"
+      ],
+      "2010s": [
+        "Mini Countryman Rally Edition",
+        "Ford Fiesta RS Rally",
+        "Volkswagen Polo Rally",
+        "Hyundai i20 Rally"
+      ]
+    }
+  }
+}

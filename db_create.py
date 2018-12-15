@@ -66,10 +66,10 @@ cars = [
 
 # Create splits
 splits = [
-    Split(track=tracks[0], weather=weather[0], order=1, turns=4, active=False),
-    Split(track=tracks[3], weather=weather[1], order=2, turns=4),
-    Split(track=tracks[0], weather=weather[1], order=3, turns=4, last_in_stage=True),
-    Split(track=tracks[1], weather=weather[3], order=1, turns=4, last_in_stage=True, active=True),
+    Split(track=tracks[0], weather=weather[0], order=1, active=True),
+    Split(track=tracks[3], weather=weather[1], order=2,),
+    Split(track=tracks[0], weather=weather[1], order=3, last_in_stage=True),
+    Split(track=tracks[1], weather=weather[3], order=1, last_in_stage=True, active=False),
 ]
 
 # Create times
@@ -111,8 +111,8 @@ event.event_players.extend(event_players)
 
 # Create stages
 stages = [
-    Stage(order=2, event=event, country=countries[0], splits=splits[:3], total_splits=3, last_in_event=True),
-    Stage(order=1, event=event, country=countries[1], splits=splits[3:4], total_splits=1, last_in_event=False)
+    Stage(order=1, event=event, country=countries[0], splits=splits[:3], last_in_event=False),
+    Stage(order=2, event=event, country=countries[1], splits=splits[3:4], last_in_event=True)
 ]
 
 # Create stage ranking

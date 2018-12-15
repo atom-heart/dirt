@@ -97,6 +97,220 @@ class CarClass(db.Model):
     # Backrefs: game
 
 
+class Player(db.Model):
+    __tablename__ = 'players'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+
+    # Relationships
+    times = db.relationship('Time', lazy='dynamic')
+    events = db.relationship('EventPlayer', backref='player', lazy='dynamic')
+
+
+
+#### Events ###########################################################
+#######################################################################
+
+# Many-to-many relationships ##########################################
+
+class EventPlayer(db.Model):
+    __tablename__ = 'event_players'
+
+    player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), primary_key=True)
+    order = db.Column(db.Integer, nullable=False)
+    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'))
+
+    __table_args__ = (db.PrimaryKeyConstraint(player_id, event_id),)
+
+    # Relationships
+    car = db.relationship('Car')
+
+
+class StageRanking(db.Model):
+    __tablename__ = 'stage_rankings'
+
+    player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
+    stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'), primary_key=True)
+    disqualified = db.Column(db.Boolean, nullable=False, default=False)
+    points = db.Column(db.Integer, nullable=False, default=0)
+
+    __table_args__ = (db.PrimaryKeyConstraint(player_id, stage_id),)
+
+    # Relationships
+    player = db.relationship('Player')
+
+
+events_car_classes = db.Table('events_car_classes',
+    db.Column('event_id', db.Integer, db.ForeignKey('events.id')),
+    db.Column('car_class_id', db.Integer, db.ForeignKey('car_classes.id'))
+)
+
+
+# Tables ##############################################################
+
+class Event(db.Model):
+    __tablename__ = 'events'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    finished = db.Column(db.Boolean, nullable=False, default=False)
+    start = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
+
+    # Relationships
+    game = db.relationship('Game')
+    car_classes = db.relationship('CarClass', secondary=events_car_classes)
+    event_players = db.relationship('EventPlayer', backref='event', lazy='dynamic')
+    stages = db.relationship('Stage', backref='event', lazy='dynamic')
+
+
+    def get_ranking(self):
+        return db.session.query(
+                Player.id,
+                Player.name,
+                func.sum(StageRanking.points),
+                Car.name)\
+            .join(Stage, Stage.event_id == self.id)\
+            .join(StageRanking, and_(
+                StageRanking.player_id == Player.id,
+                StageRanking.stage_id == Stage.id))\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Player.id,
+                EventPlayer.event_id == self.id))\
+            .join(Car, Car.id == EventPlayer.car_id)\
+            .group_by(
+                Player.id,
+                Player.name,
+                Car.name,
+                EventPlayer.order)\
+            .order_by(
+                func.sum(StageRanking.points).desc(),
+                EventPlayer.order)\
+            .all()
+
+
+    def get_car_classes(self):
+        return [[cc.id, cc.name] for cc in self.car_classes]
+
+
+    def get_players(self):
+        return db.session.query(
+                Player.id,
+                Player.name,
+                EventPlayer.order,
+                Car.id,
+                Car.name)\
+            .join(EventPlayer, and_(
+                EventPlayer.event_id == self.id,
+                EventPlayer.player_id == Player.id))\
+            .join(Car, Car.id == EventPlayer.car_id)\
+            .order_by(EventPlayer.order)\
+            .all()
+
+
+    def get_stages(self):
+        return db.session.query(
+                Stage.id,
+                Country.name.label('country'),
+                Stage.finished,
+                Stage.order,
+                Stage.last_in_event)\
+            .join(Country, Country.id == Stage.country_id)\
+            .filter(Stage.event_id == self.id)\
+            .order_by(Stage.order)\
+            .all()
+
+
+    def should_finish(self):
+        return db.session.query(func.count(Stage.id))\
+            .filter(Stage.event_id == self.id)\
+            .filter(Stage.finished.isnot(True))\
+            .first()[0] == 0
+
+
+class Stage(db.Model):
+    __tablename__ = 'stages'
+
+    id = db.Column(db.Integer, primary_key=True)
+    order = db.Column(db.Integer, nullable=False)
+    finished = db.Column(db.Boolean, nullable=False, default=False)
+    last_in_event = db.Column(db.Boolean, nullable=False, default=False)
+    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
+    country_id = db.Column(db.Integer, db.ForeignKey('countries.id'))
+
+    # Relationships
+    country = db.relationship('Country')
+    splits = db.relationship('Split', backref='stage', lazy='dynamic')
+    stage_ranking = db.relationship('StageRanking', backref='stage', lazy='dynamic')
+    # Backrefs: event
+
+
+    def get_ranking(self):
+        return db.session\
+            .query(
+                Player.id,
+                Player.name,
+                func.sum(Time.time),
+                StageRanking.points,
+                StageRanking.disqualified)\
+            .join(StageRanking, and_(
+                StageRanking.player_id == Player.id,
+                StageRanking.stage_id == self.id))\
+            .join(EventPlayer, and_(
+                EventPlayer.event_id == self.event_id,
+                EventPlayer.player_id == Player.id))\
+            .join(Split, Split.stage_id == self.id)\
+            .join(Time, and_(
+                Time.split_id == Split.id,
+                Time.player_id == Player.id))\
+            .group_by(
+                Player.id,
+                Player.name,
+                StageRanking.points,
+                StageRanking.disqualified,
+                EventPlayer.order)\
+            .order_by(
+                case([(StageRanking.disqualified, 1)], else_=0),
+                StageRanking.points.desc(),
+                func.sum(Time.time),
+                EventPlayer.order)\
+            .all()
+
+
+    def get_progress(self):
+        return db.session.query(
+                Player.id,
+                Player.name,
+                func.sum(StageRanking.points))\
+            .join(Stage, Stage.event_id == self.event_id)\
+            .join(StageRanking, and_(
+                StageRanking.player_id == Player.id,
+                StageRanking.stage_id == Stage.id))\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Player.id,
+                EventPlayer.event_id == self.event_id))\
+            .filter(Stage.order <= self.order)\
+            .group_by(Player.id, Player.name, EventPlayer.order)\
+            .order_by(
+                func.sum(StageRanking.points).desc(),
+                EventPlayer.order)\
+            .all()
+
+
+    def get_previous(self):
+        return Stage.query\
+            .filter(Stage.event_id == self.event_id)\
+            .filter(Stage.order == self.order - 1)\
+            .first()
+
+
+    def should_finish(self):
+        splits_not_finished = list(filter(lambda s: not s.finished, self.splits.all()))
+        return len(splits_not_finished) == 0
+
+
 class Split(db.Model):
     __tablename__ = 'splits'
 
@@ -104,7 +318,6 @@ class Split(db.Model):
     order = db.Column(db.Integer, nullable=True)
     finished = db.Column(db.Boolean, default=False, nullable=False)
     active = db.Column(db.Boolean, default=False, nullable=False)
-    turns = db.Column(db.Integer, nullable=False)
     last_in_stage = db.Column(db.Boolean, nullable=False, default=False)
 
     # Foreign keys
@@ -199,245 +412,3 @@ class Time(db.Model):
 
     player = db.relationship('Player', lazy='joined')
     # Backrefs: player
-
-
-#### Events ###########################################################
-#######################################################################
-
-# Many-to-many relationships ##########################################
-
-class EventPlayer(db.Model):
-    __tablename__ = 'event_players'
-
-    player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'), primary_key=True)
-    order = db.Column(db.Integer, nullable=False)
-    car_id = db.Column(db.Integer, db.ForeignKey('cars.id'))
-    points = db.Column(db.Integer, nullable=False, default=0)
-
-    __table_args__ = (db.PrimaryKeyConstraint(player_id, event_id),)
-
-    # Relationships
-    car = db.relationship('Car')
-
-
-class StageRanking(db.Model):
-    __tablename__ = 'stage_rankings'
-
-    player_id = db.Column(db.Integer, db.ForeignKey('players.id'), primary_key=True)
-    stage_id = db.Column(db.Integer, db.ForeignKey('stages.id'), primary_key=True)
-    time_total = db.Column(db.Interval, nullable=False, default=td())
-    points = db.Column(db.Integer, nullable=False, default=0)
-    disqualified = db.Column(db.Boolean, nullable=False, default=False)
-    win_by_disq = db.Column(db.Boolean, nullable=False, default=False)
-
-    __table_args__ = (db.PrimaryKeyConstraint(player_id, stage_id),)
-
-    # Relationships
-    player = db.relationship('Player')
-
-
-events_car_classes = db.Table('events_car_classes',
-    db.Column('event_id', db.Integer, db.ForeignKey('events.id')),
-    db.Column('car_class_id', db.Integer, db.ForeignKey('car_classes.id'))
-)
-
-
-# Tables ##############################################################
-
-class Player(db.Model):
-    __tablename__ = 'players'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-
-    # Relationships
-    times = db.relationship('Time', lazy='dynamic')
-    events = db.relationship('EventPlayer', backref='player', lazy='dynamic')
-
-
-class Event(db.Model):
-    __tablename__ = 'events'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    finished = db.Column(db.Boolean, nullable=False, default=False)
-    start = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
-
-    # Relationships
-    game = db.relationship('Game')
-    car_classes = db.relationship('CarClass', secondary=events_car_classes)
-    event_players = db.relationship('EventPlayer', backref='event', lazy='dynamic')
-    stages = db.relationship('Stage', backref='event', lazy='dynamic')
-
-
-    def get_ranking(self):
-        return db.session.query(
-                Player.id,
-                Player.name,
-                func.sum(StageRanking.points),
-                Car.name)\
-            .join(Stage, Stage.event_id == self.id)\
-            .join(StageRanking, and_(
-                StageRanking.player_id == Player.id,
-                StageRanking.stage_id == Stage.id))\
-            .join(EventPlayer, and_(
-                EventPlayer.player_id == Player.id,
-                EventPlayer.event_id == self.id))\
-            .join(Car, Car.id == EventPlayer.car_id)\
-            .group_by(
-                Player.id,
-                Player.name,
-                Car.name,
-                EventPlayer.order)\
-            .order_by(
-                func.sum(StageRanking.points).desc(),
-                EventPlayer.order)\
-            .all()
-
-
-    def get_car_classes(self):
-        return [[cc.id, cc.name] for cc in self.car_classes]
-
-
-    def get_players(self):
-        return db.session.query(
-                Player.id,
-                Player.name,
-                EventPlayer.order,
-                Car.id,
-                Car.name)\
-            .join(EventPlayer, and_(
-                EventPlayer.event_id == self.id,
-                EventPlayer.player_id == Player.id))\
-            .join(Car, Car.id == EventPlayer.car_id)\
-            .order_by(EventPlayer.order)\
-            .all()
-
-
-    def get_stages(self):
-        return db.session.query(
-                Stage.id,
-                Country.name.label('country'),
-                Stage.finished,
-                Stage.order,
-                Stage.last_in_event)\
-            .join(Country, Country.id == Stage.country_id)\
-            .filter(Stage.event_id == self.id)\
-            .order_by(Stage.order)\
-            .all()
-
-
-    def get_next_split_id(self):
-        current = Split.query.get(self.current_split_id)
-        next = Split.query\
-            .filter(Split.stage_id == current.stage_id)\
-            .filter(Split.order == current.order + 1)\
-            .first()
-
-        if next:
-            return next
-
-        # If last split in stage, grab first split from next stage
-        stage = Stage.query.get(current.stage_id)
-
-        next_stage = Stage.query\
-            .filter(and_(Stage.event_id == self.id, Stage.order == stage.order + 1))\
-            .first()
-
-        return Split.query\
-            .filter(Stage.id == next_stage.id)\
-            .filter(Split.order == 1)\
-            .first()
-
-
-    def should_finish(self):
-        return db.session.query(func.count(Stage.id))\
-            .filter(Stage.event_id == self.id)\
-            .filter(Stage.finished.isnot(True))\
-            .first()[0] == 0
-
-
-class Stage(db.Model):
-    __tablename__ = 'stages'
-
-    id = db.Column(db.Integer, primary_key=True)
-    order = db.Column(db.Integer, nullable=False)
-    event_id = db.Column(db.Integer, db.ForeignKey('events.id'))
-    country_id = db.Column(db.Integer, db.ForeignKey('countries.id'))
-    finished = db.Column(db.Boolean, nullable=False, default=False)
-    total_splits = db.Column(db.Integer, nullable=False)
-    last_in_event = db.Column(db.Boolean, nullable=False, default=False)
-
-    # Relationships
-    country = db.relationship('Country')
-    splits = db.relationship('Split', backref='stage', lazy='dynamic')
-    stage_ranking = db.relationship('StageRanking', backref='stage', lazy='dynamic')
-    # Backrefs: event
-
-
-    def get_ranking(self):
-        return db.session\
-            .query(
-                Player.id,
-                Player.name,
-                func.sum(Time.time),
-                StageRanking.points,
-                StageRanking.disqualified,
-                StageRanking.win_by_disq)\
-            .join(StageRanking, and_(
-                StageRanking.player_id == Player.id,
-                StageRanking.stage_id == self.id))\
-            .join(EventPlayer, and_(
-                EventPlayer.event_id == self.event_id,
-                EventPlayer.player_id == Player.id))\
-            .join(Split, Split.stage_id == self.id)\
-            .join(Time, and_(
-                Time.split_id == Split.id,
-                Time.player_id == Player.id))\
-            .group_by(
-                Player.id,
-                Player.name,
-                StageRanking.points,
-                StageRanking.disqualified,
-                StageRanking.win_by_disq,
-                EventPlayer.order)\
-            .order_by(
-                case([(StageRanking.win_by_disq, 1), (StageRanking.disqualified, 2)], else_=0),
-                StageRanking.points.desc(),
-                func.sum(Time.time),
-                EventPlayer.order)\
-            .all()
-
-
-    def get_progress(self):
-        return db.session.query(
-                Player.id,
-                Player.name,
-                func.sum(StageRanking.points))\
-            .join(Stage, Stage.event_id == self.event_id)\
-            .join(StageRanking, and_(
-                StageRanking.player_id == Player.id,
-                StageRanking.stage_id == Stage.id))\
-            .join(EventPlayer, and_(
-                EventPlayer.player_id == Player.id,
-                EventPlayer.event_id == self.event_id))\
-            .filter(Stage.order <= self.order)\
-            .group_by(Player.id, Player.name, EventPlayer.order)\
-            .order_by(
-                func.sum(StageRanking.points).desc(),
-                EventPlayer.order)\
-            .all()
-
-
-    def get_previous(self):
-        return Stage.query\
-            .filter(Stage.event_id == self.event_id)\
-            .filter(Stage.order == self.order - 1)\
-            .first()
-
-
-    def should_finish(self):
-        splits_not_finished = list(filter(lambda s: not s.finished, self.splits.all()))
-        return len(splits_not_finished) == 0
