@@ -13,25 +13,19 @@ import StageProgress from './StageProgress'
 import ProgressButton from './ProgressButton'
 import StageFinishedFooter from './StageFinishedFooter'
 
+import getStage from '../selectors/getStage'
+
 class Stage extends React.Component {
   constructor(props) {
     super(props)
     this.state = { showProgress: false }
 
-    this.selectStage = this.selectStage.bind(this)
     this.loadStage = this.loadStage.bind(this)
     this.toggleProgress = this.toggleProgress.bind(this)
   }
 
-  selectStage() {
-    const selectedStageId = Object.keys(this.props.stages).find(id => (
-      this.props.stages[id].order === parseInt(this.props.match.params.stageOrder, 10)
-    ))
-    this.stage = this.props.stages[selectedStageId]
-  }
-
   loadStage() {
-    this.props.fetchStage(this.stage.id)
+    this.props.fetchStage(this.props.stage.id)
   }
 
   toggleProgress() {
@@ -40,9 +34,9 @@ class Stage extends React.Component {
 
   componentDidMount() {
     if (
-      this.stage &&
-      !this.stage.isLoading &&
-      !this.stage.hasLoaded
+      this.props.stage &&
+      !this.props.stage.isLoading &&
+      !this.props.stage.hasLoaded
     ) {
       this.loadStage()
     }
@@ -50,34 +44,32 @@ class Stage extends React.Component {
 
   componentDidUpdate() {
     if (
-      this.stage &&
-      !this.stage.isLoading &&
-      !this.stage.hasLoaded &&
-      !this.stage.error
+      this.props.stage &&
+      !this.props.stage.isLoading &&
+      !this.props.stage.hasLoaded &&
+      !this.props.stage.error
     ) {
       this.loadStage()
     }
   }
 
   render() {
-    this.selectStage()
-
-    if (!this.stage) {
+    if (!this.props.stage) {
       return <div>No such stage.</div>
     }
 
-    else if (this.stage.error) {
+    else if (this.props.stage.error) {
       return <div>Error loading stage data. <a href="#" onClick={this.loadStage}>Click here</a> to try again.</div>
     }
 
-    else if (this.stage.isLoading || !this.stage.hasLoaded) {
+    else if (this.props.stage.isLoading || !this.props.stage.hasLoaded) {
       return <div>Loading...</div>
     }
 
     else {
       const splits = this.props.splitIds.filter(id => {
         const split = this.props.splits[id]
-        return split.stage_id == this.stage.id
+        return split.stage_id == this.props.stage.id
       }).map(id => {
         const split = this.props.splits[id]
         return <Split split={split} key={split.id} />
@@ -89,19 +81,19 @@ class Stage extends React.Component {
 
             <TableHeader>
               <h4>
-                {this.stage.country}
+                {this.props.stage.country}
               </h4>
               <span className="text-muted weather">
-                {this.stage.finished ? 'Finished' : 'In progress'}
+                {this.props.stage.finished ? 'Finished' : 'In progress'}
               </span>
             </TableHeader>
 
-            {this.stage.finished &&
+            {this.props.stage.finished &&
               <div>
                 {this.state.showProgress ? (
-                  <StageProgress ranking={this.stage.progress} />
+                  <StageProgress ranking={this.props.stage.progress} />
                 ) : (
-                  <StageRanking ranking={this.stage.ranking} />
+                  <StageRanking ranking={this.props.stage.ranking} />
                 )}
                 <ProgressButton onClick={this.toggleProgress}>
                   {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
@@ -115,7 +107,7 @@ class Stage extends React.Component {
 
           {splits}
 
-          {this.stage.finished &&
+          {this.props.stage.finished &&
             <div>
               <hr />
               <StageFinishedFooter />
@@ -127,12 +119,16 @@ class Stage extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  stages: state.stages.byId,
-  splits: state.splits.byId,
-  splitIds: state.splits.allIds,
-  players: state.event.players
-})
+const mapStateToProps = (state, props) => {
+  const stage = getStage(state, props.match.params.stageOrder)
+
+  return {
+    splits: state.splits.byId,
+    splitIds: state.splits.allIds,
+    players: state.event.players,
+    stage
+  }
+}
 
 const mapDispatchToProps = dispatch => {
   return bindActionCreators({
