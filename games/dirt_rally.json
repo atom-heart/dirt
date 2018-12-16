@@ -21,7 +21,7 @@
             "favorable": true
           }
         ],
-        "stages": [
+        "tracks": [
           {
             "name": "Pedines Epidaxi",
             "length": 6590,
@@ -111,7 +111,7 @@
             "favorable": false
           }
         ],
-        "stages": [
+        "tracks": [
           {
             "name": "Fferm Wynt",
             "length": 5700,
@@ -201,7 +201,7 @@
             "favorable": false
           }
         ],
-        "stages": [
+        "tracks": [
           {
             "name": "Route de Turini Montee",
             "length": 6840,
@@ -287,7 +287,7 @@
             "favorable": true
           }
         ],
-        "stages": [
+        "tracks": [
           {
             "name": "Waldabstieg",
             "length": 6020,
@@ -373,7 +373,7 @@
             "favorable": true
           }
         ],
-        "stages": [
+        "tracks": [
           {
             "name": "Iso Oksjarvi",
             "length": 8040,
@@ -467,7 +467,7 @@
             "favorable": false
           }
         ],
-        "stages": [
+        "tracks": [
           {
             "name": "Lysvik",
             "length": 12100,

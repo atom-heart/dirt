@@ -14,6 +14,14 @@ db.drop_all()
 # Create new tables
 db.create_all()
 
+print('Done!')
+print('Adding DiRT Rally...', end=' ')
+
+exec(open('games/add_game.py').read())
+
+print('Done!')
+print('Creating an event...', end=' ')
+
 # Create players
 players = [
     Player(name='Filip'),
@@ -46,10 +54,10 @@ countries = [
 
 # Create tracks
 tracks = [
-    Track(name='Flugzeugring', game=games[0], country=countries[0]),
-    Track(name='Koryni Dafni', game=games[0], country=countries[1]),
-    Track(name='Pepe', game=games[1], country=countries[2]),
-    Track(name='Oberstein', game=games[0], country=countries[0])
+    Track(name='Flugzeugring', game=games[0], country=countries[0], length=1),
+    Track(name='Koryni Dafni', game=games[0], country=countries[1], length=1),
+    Track(name='Pepe', game=games[1], country=countries[2], length=1),
+    Track(name='Oberstein', game=games[0], country=countries[0], length=1)
 ]
 
 # Create car car_classes
@@ -60,8 +68,8 @@ car_classes = [
 
 # Create cars
 cars = [
-    Car(name='Subaru Impreza 2001', car_classes=[car_classes[0]]),
-    Car(name='Ford Fiesta RS Rally', car_classes=[car_classes[1]])
+    Car(name='Subaru Impreza 2001', car_class=car_classes[0]),
+    Car(name='Ford Fiesta RS Rally', car_class=car_classes[1])
 ]
 
 # Create splits

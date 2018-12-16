@@ -15,11 +15,6 @@ games_countries = db.Table('games_countries',
     db.Column('country_id', db.Integer, db.ForeignKey('countries.id'))
 )
 
-cars_car_classes = db.Table('cars_car_classes',
-    db.Column('car_id', db.Integer, db.ForeignKey('cars.id')),
-    db.Column('car_class_id', db.Integer, db.ForeignKey('car_classes.id')),
-)
-
 countries_weather = db.Table('countries_weather',
     db.Column('country_id', db.Integer, db.ForeignKey('countries.id')),
     db.Column('weather_id', db.Integer, db.ForeignKey('weather.id'))
@@ -57,6 +52,8 @@ class Track(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    length = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.String, nullable=True)
 
     # Foreign keys
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
@@ -71,6 +68,7 @@ class Weather(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     conditions = db.Column(db.String, nullable=False)
+    favorable = db.Column(db.Boolean, nullable=False, default=True)
 
     # Relationships
     # Backrefs: tracks
@@ -81,6 +79,7 @@ class Car(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    car_class_id = db.Column(db.Integer, db.ForeignKey('car_classes.id'))
 
     # Backrefs: car_classes
 
@@ -93,7 +92,7 @@ class CarClass(db.Model):
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
 
     # Foreign keys
-    cars = db.relationship('Car', secondary=cars_car_classes, backref='car_classes', lazy='dynamic')
+    cars = db.relationship('Car', backref='car_class', lazy='dynamic')
     # Backrefs: game
 
 
