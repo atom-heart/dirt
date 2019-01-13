@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux'
 
 import { timeToStr } from '../helpers'
 
-import { Input, Button, FormGroup, Label } from 'reactstrap'
+import { CustomInput, Button } from 'reactstrap'
 
 import Modal from './Modal'
 import TimeInput from './TimeInput'
@@ -25,16 +25,31 @@ class TurnModal extends React.Component {
   constructor(props) {
     super(props)
 
+    this.listenKeyboard = this.listenKeyboard.bind(this)
     this.onClose = this.onClose.bind(this)
     this.onSend = this.onSend.bind(this)
+  }
+
+  listenKeyboard(event) {
+    if (event.key === 'Enter' || event.keyCode === 13) {
+      this.onSend(event)
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.listenKeyboard, true)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.listenKeyboard.bind(this), true)
   }
 
   onClose() {
     this.props.hideModal()
   }
 
-  onSend(e) {
-    e.preventDefault()
+  onSend(event) {
+    event.preventDefault()
 
     this.props.sendTurn({
       turnId: this.props.turnId,
@@ -65,15 +80,13 @@ class TurnModal extends React.Component {
           </ModalBody>
 
           <ModalFooter>
-            <FormGroup check>
-              <Label check>
-                <Input
-                  type="checkbox"
-                  checked={this.props.disqualified}
-                  onChange={this.props.toggleDisq}
-                /> Disqualify
-              </Label>
-            </FormGroup>
+            <CustomInput
+              id="disqualified"
+              type="checkbox"
+              checked={this.props.disqualified}
+              onChange={this.props.toggleDisq}
+              label="Disqualify"
+            />
 
             <Button
               onClick={this.onSend}

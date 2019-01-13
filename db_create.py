@@ -75,7 +75,7 @@ cars = [
 # Create splits
 splits = [
     Split(track=tracks[0], weather=weather[0], order=1, active=True),
-    Split(track=tracks[3], weather=weather[1], order=2,),
+    Split(track=tracks[3], weather=weather[1], order=2),
     Split(track=tracks[0], weather=weather[1], order=3, last_in_stage=True),
     Split(track=tracks[1], weather=weather[3], order=1, last_in_stage=True, active=False),
 ]

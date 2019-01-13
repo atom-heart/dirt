@@ -93,7 +93,7 @@ class Stage extends React.Component {
                 {this.state.showProgress ? (
                   <StageProgress ranking={this.props.stage.progress} />
                 ) : (
-                  <StageRanking ranking={this.props.stage.ranking} />
+                  <StageRanking ranking={this.props.ranking} />
                 )}
                 <ProgressButton onClick={this.toggleProgress}>
                   {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
@@ -121,12 +121,14 @@ class Stage extends React.Component {
 
 const mapStateToProps = (state, props) => {
   const stage = getStage(state, props.match.params.stageOrder)
+  const ranking = stage ? stage.ranking : null
 
   return {
     splits: state.splits.byId,
     splitIds: state.splits.allIds,
     players: state.event.players,
-    stage
+    stage,
+    ranking
   }
 }
 

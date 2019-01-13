@@ -8,6 +8,7 @@ import '../css/layout.css'
 
 import ErrorBoundary from './components/ErrorBoundary'
 import Event from './components/Event'
+import NewEvent from './components/NewEvent'
 import ModalRoot from './components/ModalRoot'
 import store from './store.js'
 
@@ -19,8 +20,9 @@ ReactDOM.render((
       <Router>
         <Container>
           <Route path="/" exact render={() => {return <div>Hello!</div>}} />
+          <Route path="/new" component={NewEvent} />
           <Route path="/event/:id" component={Event} />
-          
+
           <Route path="/" component={ModalRoot} />
         </Container>
       </Router>

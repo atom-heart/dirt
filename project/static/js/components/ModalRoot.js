@@ -3,11 +3,15 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import TurnModal from './TurnModal'
+import AddPlayerModal from './AddPlayerModal'
+import WeatherModal from './WeatherModal'
 
-import { TURN_MODAL } from '../modal-types'
+import { TURN_MODAL, ADD_PLAYER_MODAL, WEATHER_MODAL } from '../modal-types'
 
 const MODAL_COMPONENTS = {
   [TURN_MODAL]: TurnModal,
+  [ADD_PLAYER_MODAL]: AddPlayerModal,
+  [WEATHER_MODAL]: WeatherModal
 }
 
 const ModalRoot = (props) => {

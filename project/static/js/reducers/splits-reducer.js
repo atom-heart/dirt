@@ -22,9 +22,9 @@ function updateSplit(state, action) {
 }
 
 function updateSplits(state, action) {
-  const splits = Object.assign({}, ...action.splits.map(split => {
-    return { [split.id]: Object.assign({}, state[split.id], split, compStates.idle) }
-  }))
+  const splits = Object.assign({}, ...action.splits.map(split => (
+    { [split.id]: Object.assign({}, state[split.id], split, compStates.idle) }
+  )))
   return Object.assign({}, state, splits)
 }
 

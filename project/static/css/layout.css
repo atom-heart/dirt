@@ -95,7 +95,7 @@ a {
 
 #main .card,
 #main .alert {
-  margin: 40px 0;
+  margin: 20px 0;
 }
 
 #main .card:first-child {
@@ -107,7 +107,7 @@ a {
 }
 
 #main hr {
-  margin: -15px 0;
+  margin: 0 0;
 }
 
 #main .card-header {
@@ -116,6 +116,7 @@ a {
   border-color: #e6e6e6;
   padding: 20px;
   padding-bottom: 15px;
+  border-radius: 4px;
 }
 
 #main .card-header h4 {
@@ -242,7 +243,7 @@ a {
     height: 100%;
     width: 100%;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, .4);
 }
 
 .modal-content-div {

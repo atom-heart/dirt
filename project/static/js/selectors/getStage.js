@@ -12,4 +12,4 @@ const getStage = (state, stageOrder) => {
   return stages[stageId]
 }
 
-export default memoizeOne(getStage)
+export default getStage

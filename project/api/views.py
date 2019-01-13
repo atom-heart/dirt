@@ -6,6 +6,7 @@ from project import db
 from project.filters import timefilter
 
 from project.models import Split, Stage, Event, Time, Player, StageRanking
+from project.models import Game, Track, CarClass, Weather, Car, EventPlayer, Country
 from project.api.rankings import assign_points, get_event_ranking, get_split_ranking, get_split_progress, get_stage_ranking, get_stage_progress, get_event_ranking
 from project.api.helpers import normalize, add_positions, strToTimedelta, add_points, get_next_split, get_prev_split
 
@@ -18,9 +19,192 @@ api_blueprint = Blueprint('api', __name__)
 
 #### Routes ###########################################################
 #######################################################################
+import json
+@api_blueprint.route('/api/event', methods=['POST'])
+def api_event():
+    # json data
+    data = request.get_json()
+
+    # Event with game and car classes
+    game = Game.query.get(data['gameId'])
+    cc = [CarClass.query.get(id) for id in data['classes']]
+
+    event = Event(name=data['name'], game=game, car_classes=cc)
+
+    db.session.add(event)
+
+    # Event players
+    eps = []
+    players = []
+    for order, p in enumerate(data['players'], start=1):
+        player = Player.query.get(p['playerId'])
+        players.append(player)
+
+        car = Car.query.get(p['carId'])
+
+        ep = EventPlayer(order=order, event=event, car=car)
+        ep.player = player
+
+        eps.append(ep)
+
+    db.session.add_all(eps)
+
+    # Stages
+    stages = []
+
+    for stage_order, stage in enumerate(data['stages'], start=1):
+        country = Country.query.get(stage['countryId'])
+        splits = []
+
+        for order, split in enumerate(stage['splits'], start=1):
+            track = Track.query.get(split['trackId'])
+            weather = Weather.query.get(split['weatherId'])
+
+            _split = Split(track=track, weather=weather, order=order)
+            splits.append(_split)
+
+            db.session.add(_split)
+
+            # Turns
+            turns = []
+            for player in players:
+                turn = Time(player=player, split=_split)
+                turns.append(turn)
+
+            db.session.add_all(turns)
+
+        if stage_order == 1:
+            splits[0].active = True
+        splits[-1].last_in_stage = True
+
+        db.session.add_all(splits)
+
+        _stage = Stage(order=stage_order, event=event, country=country, splits=splits)
+        stages.append(_stage)
+
+    stages[-1].last_in_event = True
+
+    for stage in stages:
+        stage_rankings = []
+
+        for player in players:
+            sr = StageRanking()
+            sr.player = player
+            stage_rankings.append(sr)
+
+        stage.stage_ranking.extend(stage_rankings)
+        db.session.add_all(stage_rankings)
+
+    db.session.add_all(stages)
+    db.session.commit()
+
+    if event.name == '':
+        event.name = 'Event #' + str(event.id)
+        db.session.add(event)
+        db.session.commit()
+
+    return jsonify({
+        'event_id': event.id
+    })
+
+
+@api_blueprint.route('/api/players')
+def api_players():
+    _players = Player.query.all()
+    if not _players:
+        return []
+
+    players = []
+
+    for _player in _players:
+        players.append({
+            'id': _player.id,
+            'name': _player.name
+        })
+
+    return jsonify(players), 200
+
+
+@api_blueprint.route('/api/player', methods=['POST'])
+def api_player():
+    if request.method == 'POST':
+        player = Player(name=request.form.get('name'))
+
+        db.session.add(player)
+        db.session.commit()
+
+        return jsonify({
+            'id': player.id,
+            'name': player.name
+        })
+
+
+@api_blueprint.route('/api/games/<int:id>')
+def api_game(id):
+    _game = Game.query.get(id)
+    if not _game:
+        abort(404)
+
+    game = {
+        'id': _game.id,
+        'name': _game.name
+    }
+
+    car_classes = []
+
+    for _class in _game.car_classes.all():
+        cars = []
+
+        for _car in _class.cars.all():
+            cars.append({
+                'id': _car.id,
+                'name': _car.name
+            })
+
+        car_classes.append({
+            'id': _class.id,
+            'name': _class.name,
+            'cars': cars
+        })
+
+    countries = []
+
+    for _country in _game.countries.all():
+        tracks = []
+
+        for _track in _country.tracks.filter(Track.game_id == _game.id).all():
+            tracks.append({
+                'id': _track.id,
+                'name': _track.name,
+                'length': _track.length,
+                'type': _track.type
+            })
+
+        weather = []
+
+        for _weather in _country.weather.all():
+            weather.append({
+                'id': _weather.id,
+                'conditions': _weather.conditions,
+                'favorable': _weather.favorable
+            })
+
+        countries.append({
+            'id': _country.id,
+            'name': _country.name,
+            'tracks': tracks,
+            'weather': weather
+        })
+
+    return jsonify({
+        'game': game,
+        'car_classes': car_classes,
+        'countries': countries
+    }), 200
+
 
 @api_blueprint.route('/api/events/<int:id>')
-def api_event(id):
+def api_eventS(id):
     _event = Event.query.get(id)
     if not _event:
         abort(404)

@@ -6,13 +6,15 @@ import { stagesReducer } from './reducers/stages-reducer'
 import { splitsReducer } from './reducers/splits-reducer'
 import { modalReducer } from './reducers/modal-reducer'
 import { turnReducer } from './reducers/turn-reducer'
+import { newEventReducer } from './reducers/new-event-reducer'
 
 const store = createStore(combineReducers({
   event: eventReducer,
   stages: stagesReducer,
   splits: splitsReducer,
   modal: modalReducer,
-  turn: turnReducer
+  turn: turnReducer,
+  newEvent: newEventReducer
 }), compose(
   applyMiddleware(thunk),
   window.devToolsExtension && window.devToolsExtension()

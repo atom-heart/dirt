@@ -53,11 +53,11 @@ def add_stage_positions(ranking):
 
 def add_pos_diffs(prev, curr):
     """Determines position differences betwen current and previous split progresses"""
-    prev_pos = {player['id']: player['position'] for player in prev}
+    prev_positions = {player['id']: player['position'] for player in prev}
 
     for player in curr:
         id = player['id']
-        player['position_diff'] = prev_pos[id] - player['position']
+        player['position_diff'] = prev_positions[id] - player['position']
 
     return curr
 
@@ -154,7 +154,7 @@ def strToTimedelta(datestring):
 
 def add_points(players):
     # temp point system which works only works for 4 or less players
-    points = [5, 3, 1, 0]
+    points = [8, 6, 4, 2, 0]
 
     result = {}
     for player in players:
