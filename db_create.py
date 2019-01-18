@@ -16,7 +16,7 @@ db.create_all()
 
 print('Done!')
 print('Adding DiRT Rally...', end=' ')
-
+#
 exec(open('games/add_game.py').read())
 
 print('Done!')
