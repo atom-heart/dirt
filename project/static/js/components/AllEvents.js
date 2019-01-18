@@ -33,7 +33,7 @@ class Events extends React.Component {
       return <Redirect to={path} />
     }
 
-    else if (!this.props.events) {
+    else if (this.props.events.length === 0) {
       return <PageLoader />
     }
 
