@@ -1,7 +1,5 @@
 import React from 'react'
 
-import { Jumbotron } from 'reactstrap'
-
 const styles = {
   display: 'flex',
   height: '100%',
@@ -10,7 +8,7 @@ const styles = {
   justifyContent: 'center'
 }
 
-const PageLoader = (props) => {
+const PageLoader = () => {
   return <div style={styles}>Loading...</div>
 }
 

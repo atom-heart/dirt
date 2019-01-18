@@ -4,6 +4,8 @@ from project import db
 from project.models import Split, Stage
 from project.filters import timefilter
 
+import math
+
 
 def add_positions(ranking):
     """Determines player positions. Assumes input list of players is sorted"""
@@ -153,12 +155,13 @@ def strToTimedelta(datestring):
 
 
 def add_points(players):
-    # temp point system which works only works for 4 or less players
-    points = [8, 6, 4, 2, 0]
+    # temp point system
+    points = math.ceil(len(players) * .75) * 2
 
     result = {}
     for player in players:
-        result[player['id']] = 0 if player['disqualified'] else points[player['position'] - 1]
+        result[player['id']] = 0 if player['disqualified'] else points
+        points = points - 2 if points > 0 else 0
 
     return result
 

@@ -4,6 +4,7 @@ const TableHeader = (props) => {
   return (
     <div
       className="card-header d-flex align-items-baseline justify-content-between"
+      style={{backgroundColor: '#fff'}}
     >
       {props.children}
     </div>

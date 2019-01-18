@@ -119,7 +119,9 @@ class EventPlayers extends React.Component {
 
     return (
       <Card>
-        <TableHeader><h4>{this.state.addPlayer ? 'Add player' : 'Players'}</h4></TableHeader>
+        <TableHeader>
+          <h4>{this.state.addPlayer ? 'Add player' : 'Players'}</h4>
+        </TableHeader>
 
         <table className="table">
           <tbody>

@@ -53,7 +53,6 @@ class CreateEventButton extends React.Component {
       stages
     }
 
-    console.log(data)
     this.props.createEvent(data)
   }
 

@@ -155,7 +155,7 @@ class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     finished = db.Column(db.Boolean, nullable=False, default=False)
-    start = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    start = db.Column(db.DateTime, nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.id'))
 
     # Relationships

@@ -20,3 +20,18 @@ export const fetchEvent = id => {
       )
   }
 }
+
+export const fetchEvents = () => {
+  return dispatch => {
+    fetch(`${BASE_URL}api/events`)
+      .then(res => res.json())
+      .then(
+        (response) => {
+          console.log(response)
+        },
+        () => {
+          console.log('fetchEvents error')
+        }
+      )
+  }
+}

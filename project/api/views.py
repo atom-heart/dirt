@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, jsonify, redirect, abort, request
 from sqlalchemy import and_
 from json import loads as json_loads
+from datetime import datetime
 
 from project import db
 from project.filters import timefilter
@@ -19,93 +20,109 @@ api_blueprint = Blueprint('api', __name__)
 
 #### Routes ###########################################################
 #######################################################################
+@api_blueprint.route('/api/events')
+def api_events():
+    _events = Event.query.order_by(Event.start.desc()).all()
+
+    response = [{
+        'id': e.id,
+        'name': e.name,
+        'finished': e.finished,
+        'started': e.start,
+        'game_id': e.game_id
+    } for e in _events]
+
+    return jsonify(response)
+
+
 import json
 @api_blueprint.route('/api/event', methods=['POST'])
 def api_event():
-    # json data
-    data = request.get_json()
+    # Create an event
+    if request.method == 'POST':
+        data = request.get_json()
 
-    # Event with game and car classes
-    game = Game.query.get(data['gameId'])
-    cc = [CarClass.query.get(id) for id in data['classes']]
+        # Event with game and car classes
+        game = Game.query.get(data['gameId'])
+        cc = [CarClass.query.get(id) for id in data['classes']]
 
-    event = Event(name=data['name'], game=game, car_classes=cc)
+        event = Event(name=data['name'], game=game, car_classes=cc, start=datetime.now())
 
-    db.session.add(event)
-
-    # Event players
-    eps = []
-    players = []
-    for order, p in enumerate(data['players'], start=1):
-        player = Player.query.get(p['playerId'])
-        players.append(player)
-
-        car = Car.query.get(p['carId'])
-
-        ep = EventPlayer(order=order, event=event, car=car)
-        ep.player = player
-
-        eps.append(ep)
-
-    db.session.add_all(eps)
-
-    # Stages
-    stages = []
-
-    for stage_order, stage in enumerate(data['stages'], start=1):
-        country = Country.query.get(stage['countryId'])
-        splits = []
-
-        for order, split in enumerate(stage['splits'], start=1):
-            track = Track.query.get(split['trackId'])
-            weather = Weather.query.get(split['weatherId'])
-
-            _split = Split(track=track, weather=weather, order=order)
-            splits.append(_split)
-
-            db.session.add(_split)
-
-            # Turns
-            turns = []
-            for player in players:
-                turn = Time(player=player, split=_split)
-                turns.append(turn)
-
-            db.session.add_all(turns)
-
-        if stage_order == 1:
-            splits[0].active = True
-        splits[-1].last_in_stage = True
-
-        db.session.add_all(splits)
-
-        _stage = Stage(order=stage_order, event=event, country=country, splits=splits)
-        stages.append(_stage)
-
-    stages[-1].last_in_event = True
-
-    for stage in stages:
-        stage_rankings = []
-
-        for player in players:
-            sr = StageRanking()
-            sr.player = player
-            stage_rankings.append(sr)
-
-        stage.stage_ranking.extend(stage_rankings)
-        db.session.add_all(stage_rankings)
-
-    db.session.add_all(stages)
-    db.session.commit()
-
-    if event.name == '':
-        event.name = 'Event #' + str(event.id)
         db.session.add(event)
+
+        # Event players
+        eps = []
+        players = []
+        for order, p in enumerate(data['players'], start=1):
+            player = Player.query.get(p['playerId'])
+            players.append(player)
+
+            car = Car.query.get(p['carId'])
+
+            ep = EventPlayer(order=order, event=event, car=car)
+            ep.player = player
+
+            eps.append(ep)
+
+        db.session.add_all(eps)
+
+        # Stages
+        stages = []
+
+        for stage_order, stage in enumerate(data['stages'], start=1):
+            country = Country.query.get(stage['countryId'])
+            splits = []
+
+            for order, split in enumerate(stage['splits'], start=1):
+                track = Track.query.get(split['trackId'])
+                weather = Weather.query.get(split['weatherId'])
+
+                _split = Split(track=track, weather=weather, order=order)
+                splits.append(_split)
+
+                db.session.add(_split)
+
+                # Turns
+                turns = []
+                for player in players:
+                    turn = Time(player=player, split=_split)
+                    turns.append(turn)
+
+                db.session.add_all(turns)
+
+            if stage_order == 1:
+                splits[0].active = True
+            splits[-1].last_in_stage = True
+
+            db.session.add_all(splits)
+
+            _stage = Stage(order=stage_order, event=event, country=country, splits=splits)
+            stages.append(_stage)
+
+        stages[-1].last_in_event = True
+
+        for stage in stages:
+            stage_rankings = []
+
+            for player in players:
+                sr = StageRanking()
+                sr.player = player
+                stage_rankings.append(sr)
+
+            stage.stage_ranking.extend(stage_rankings)
+            db.session.add_all(stage_rankings)
+
+        db.session.add_all(stages)
         db.session.commit()
 
-    return jsonify({
-        'event_id': event.id
-    })
+        if event.name == '':
+            event.name = 'Event #' + str(event.id)
+            db.session.add(event)
+            db.session.commit()
+
+        return jsonify({
+            'event_id': event.id
+        })
 
 
 @api_blueprint.route('/api/players')
