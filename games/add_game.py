@@ -8,7 +8,6 @@ def commit(entity):
     db.session.add(entity)
     db.session.commit()
 
-
 def get_weather(conditions):
     return Weather.query.filter(Weather.conditions == conditions).first()
 
