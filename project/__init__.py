@@ -11,12 +11,8 @@ from flask_sqlalchemy import SQLAlchemy
 instance_path = path.join(path.abspath(curdir), 'instance')
 
 # Init app with config file
-app = Flask(__name__)
-# app.config.from_pyfile('config.py')
-app.config.update({
-    'SQLALCHEMY_DATABASE_URI': os.environ['DATABASE_URL'],
-    'SQLALCHEMY_TRACK_MODIFICATIONS': False
-})
+app = Flask(__name__, instance_path=instance_path, instance_relative_config=True)
+app.config.from_pyfile('config.py')
 
 # Modules
 db = SQLAlchemy(app)
