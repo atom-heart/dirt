@@ -24,6 +24,7 @@ import os
 
 @api_blueprint.route('/api/populate')
 def api_populate():
+    return abort(404)
     # yes, that's how I populate database. i know.
     APP_ROOT = os.path.dirname(os.path.abspath(__file__))
     path = APP_ROOT + '/add_game.py'
