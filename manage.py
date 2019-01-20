@@ -3,6 +3,8 @@ from flask_migrate import Migrate, MigrateCommand
 from project import app, db, models
 from sqlalchemy.exc import IntegrityError
 
+import os
+
 # Initializing the manager
 manager = Manager(app)
 
