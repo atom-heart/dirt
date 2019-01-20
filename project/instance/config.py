@@ -1,7 +1,8 @@
-from os import path
 import os
 
-BASEDIR = path.abspath(path.dirname(__file__))
+BASEDIR = os.path.abspath(path.dirname(__file__))
+
+print(os.environ['DATABASE_URL'])
 
 # The app
 DEBUG = True
