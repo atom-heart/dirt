@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 
 const NavSection = (props) => {
   return (
-    <ul className="nav flex-column nav-pills top-level-menu">
+    <ul className="nav flex-column nav-pills top-level-menu" style={props.style}>
       {props.children}
     </ul>
   )

@@ -60,7 +60,7 @@ class CreateEventButton extends React.Component {
     this.allowed = this.allowCreate()
 
     return (
-      <NavSection>
+      <NavSection style={{borderBottom: 'none'}}>
         <Button
           color="primary"
           disabled={!this.allowed}
