@@ -29,7 +29,7 @@ class MainNav extends React.Component {
     return (
       <Navbar className="shadow-sm" light expand="md" style={{borderBottom: '1px solid #e6e6e6'}}>
         <Container style={{maxWidth: 900}}>
-          <NavLink className="navbar-brand" to="/">(App)</NavLink>
+          <NavLink className="navbar-brand" to="/">Rallr</NavLink>
           <NavbarToggler onClick={this.toggle} />
           <Collapse isOpen={this.state.isOpen} navbar>
             <Nav className="ml-auto" navbar>

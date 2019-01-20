@@ -33,7 +33,7 @@ class NewEvent extends React.Component {
       return <Redirect to={url} />
     }
 
-    if (!(this.props.players.length > 0 && this.props.game.id !== null)) {
+    if (this.props.game.meta.id === null) {
       return <PageLoader />
     }
 

@@ -20,6 +20,17 @@ api_blueprint = Blueprint('api', __name__)
 
 #### Routes ###########################################################
 #######################################################################
+import os
+
+@api_blueprint.route('/api/populate')
+def api_populate():
+    # yes, that's how I populate database. i know.
+    APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+    path = APP_ROOT + '/add_game.py'
+    exec(open(path).read())
+
+    return jsonify('done')
+
 @api_blueprint.route('/api/events')
 def api_events():
     _events = Event.query.order_by(Event.start.desc()).all()
@@ -128,8 +139,9 @@ def api_event():
 @api_blueprint.route('/api/players')
 def api_players():
     _players = Player.query.all()
+    print(not _players)
     if not _players:
-        return []
+        return jsonify([])
 
     players = []
 
