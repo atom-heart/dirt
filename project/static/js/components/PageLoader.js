@@ -9,7 +9,14 @@ const styles = {
 }
 
 const PageLoader = () => {
-  return <div style={styles}>Loading...</div>
+  // return <div style={styles}>Loading...</div>
+  return (
+    <div style={styles}>
+      <div className="spinner-grow text-primary" role="status">
+        <span className="sr-only">Loading...</span>
+      </div>
+    </div>
+  )
 }
 
 export default PageLoader
