@@ -1,7 +1,6 @@
-from os import path
 import os
 
-BASEDIR = path.abspath(path.dirname(__file__))
+BASEDIR = os.path.abspath(path.dirname(__file__))
 
 # The app
 DEBUG = False
