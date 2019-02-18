@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
@@ -7,9 +7,11 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import '../css/layout.css'
 
 import ErrorBoundary from './components/ErrorBoundary'
-import Event from './components/Event'
+import PageLoader from './components/PageLoader'
 import ModalRoot from './components/ModalRoot'
 import store from './store.js'
+
+const Event = lazy(() => import('./routes/Event'))
 
 import { Container } from 'reactstrap'
 
@@ -18,8 +20,10 @@ ReactDOM.render((
     <Provider store={store}>
       <Router>
         <Container>
-          <Route path="/" exact render={() => {return <div>Hello!</div>}} />
-          <Route path="/event/:id" component={Event} />
+          <Suspense fallback={<PageLoader />}>
+            <Route path="/" exact render={() => { return <div>Hello!</div> }} />
+            <Route path="/event/:id" component={Event} />
+          </Suspense>
 
           <Route path="/" component={ModalRoot} />
         </Container>
