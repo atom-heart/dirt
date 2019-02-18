@@ -21,26 +21,23 @@ const initialState = {
 }
 
 function updateTime(state, action) {
-  const time = Object.assign({}, state.time, {
-    [action.interval]: action.value
-  })
-
-  return Object.assign({}, state, { time })
+  const time = { ...state.time, [action.interval]: action.value }
+  return { ...state, time }
 }
 
 export const turnReducer = (state = initialState, action) => {
   switch (action.type) {
+    case MOUNT_TURN:
+      return { ...initialState, ...action.data }
+      
     case IS_LOADING:
-      return Object.assign({}, state, { isLoading: true, error: false })
+      return { ...state, isLoading: true, error: false }
 
     case THROW_ERROR:
-      return Object.assign({}, state, { isLoading: false, error: true })
-
-    case MOUNT_TURN:
-      return Object.assign({}, initialState, action.data)
+      return { ...state, isLoading: false, error: true }
 
     case TOGGLE_DISQ:
-      return Object.assign({}, state, {disqualified: !state.disqualified})
+      return { ...state, disqualified: !state.disqualified }
 
     case UPDATE_TIME:
       return updateTime(state, action)

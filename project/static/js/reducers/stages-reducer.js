@@ -10,18 +10,18 @@ import {
 
 function loadStages(state, action) {
   const stages = Object.assign({}, ...action.stages.map(stage => (
-    { [stage.id]: Object.assign(stage, compStates.idle) }
+    { [stage.id]: { ...stage, ...compStates.idle } }
   )))
   return Object.assign({}, state, stages)
 }
 
 function updateStage(state, action) {
-  const stage = Object.assign(
-    state[action.stage.id],
-    action.stage,
-    compStates.hasLoaded
-  )
-  return Object.assign({}, state, { [action.stage.id]: stage })
+  const stage = {
+    ...state[action.stage.id],
+    ...action.stage,
+    ...compStates.hasLoaded
+  }
+  return { ...state, [action.stage.id]: stage }
 }
 
 const stagesById = (state = {}, action) => {

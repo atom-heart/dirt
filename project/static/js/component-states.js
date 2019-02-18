@@ -1,17 +1,17 @@
-const idleState = { isLoading: false, hasLoaded: false, error: false }
+const idleState = {
+  isLoading: false,
+  hasLoaded: false,
+  error: false
+}
 
 export const compStates = {
   idle: idleState,
-  isLoading: Object.assign({}, idleState, { isLoading: true }),
-  hasLoaded: Object.assign({}, idleState, { hasLoaded: true }),
-  error: Object.assign({}, idleState, { error: true })
-}
-
-export function idlize(entities, compState) {
-  return entities.map(entity => Object.assign(entity, compState))
+  isLoading: { ...idleState, isLoading: true },
+  hasLoaded: { ...idleState, hasLoaded: true },
+  error: { ...idleState, error: true }
 }
 
 export function setCompState(state, compKey, compState) {
-  const comp = Object.assign(state[compKey], compState)
-  return Object.assign({}, state, { [compKey]: comp })
+  const updatedComp = { ...state[compKey], ...compState }
+  return { ...state, [compKey]: updatedComp }
 }

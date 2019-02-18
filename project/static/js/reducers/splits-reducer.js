@@ -10,22 +10,29 @@ import {
 } from '../actions/splits-actions'
 
 function loadSplits(state, action) {
-  const splits = Object.assign({}, ...action.splits.map(split => (
-    { [split.id]: Object.assign(split, compStates.idle) }
-  )))
-  return Object.assign({}, state, splits)
+  const splits = Object.assign({}, ...action.splits.map(split => {
+    return { [split.id]: { ...split, ...compStates.idle } }
+  }))
+  return { ...state, ...splits }
 }
 
 function updateSplit(state, action) {
-  const split = Object.assign(state[action.split.id], action.split)
-  return Object.assign({}, state, { [action.split.id]: split })
+  const split = {
+    ...state[action.split.id],
+    ...action.split
+  }
+  return { ...state, [action.split.id]: split }
 }
 
 function updateSplits(state, action) {
   const splits = Object.assign({}, ...action.splits.map(split => {
-    return { [split.id]: Object.assign({}, state[split.id], split, compStates.idle) }
+    return { [split.id]: {
+      ...state[split.id],
+      ...split,
+      ...compStates.idle
+    }}
   }))
-  return Object.assign({}, state, splits)
+  return { ...state, ...splits }
 }
 
 const splitsById = (state = {}, action) => {

@@ -17,7 +17,7 @@ db.create_all()
 print('Done!')
 print('Adding DiRT Rally...', end=' ')
 
-exec(open('games/add_game.py').read())
+exec(open('db_data/db_add_dirt_rally.py').read())
 
 print('Done!')
 print('Creating an event...', end=' ')

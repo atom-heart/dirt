@@ -13,7 +13,7 @@ def get_weather(conditions):
     return Weather.query.filter(Weather.conditions == conditions).first()
 
 # Open json file
-with open('games/dirt_rally.json') as game_file:
+with open('db_data/dirt_rally.json') as game_file:
     data = json.load(game_file)
 
 # Create a game

@@ -10,16 +10,16 @@ import {
 export const eventReducer = (state = compStates.isLoading, action) => {
   switch (action.type) {
     case LOAD_EVENT:
-      return Object.assign({}, state, action.data, compStates.hasLoaded)
+      return  { ...state, ...action.data, ...compStates.hasLoaded }
 
     case IS_LOADING:
-      return Object.assign({}, state, compStates.isLoading)
+      return { ...state, ...compStates.isLoading }
 
     case THROW_ERROR:
-      return Object.assign({}, state, compStates.error)
+      return { ...state, ...state, ...compStates.error }
 
     case UPDATE_EVENT:
-      return Object.assign({}, state, action.data)
+      return { ...state, ...action.data }
 
     default:
       return state
