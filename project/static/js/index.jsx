@@ -20,7 +20,7 @@ ReactDOM.render((
         <Container>
           <Route path="/" exact render={() => {return <div>Hello!</div>}} />
           <Route path="/event/:id" component={Event} />
-          
+
           <Route path="/" component={ModalRoot} />
         </Container>
       </Router>
