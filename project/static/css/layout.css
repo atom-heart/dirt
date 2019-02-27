@@ -111,7 +111,7 @@ a {
 }
 
 #main .card-header {
-  background: inherit;
+  background: transparent;
   border-width: 0px;
   border-color: #e6e6e6;
   padding: 20px;

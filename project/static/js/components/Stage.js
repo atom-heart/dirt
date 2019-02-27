@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { Fragment } from 'react'
+// import { Fragment } from 'react-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -78,32 +79,32 @@ class Stage extends React.Component {
       return (
         <div>
           <Card>
-
-            <TableHeader>
-              <h4>
-                {this.props.stage.country}
-              </h4>
-              <span className="text-muted weather">
-                {this.props.stage.finished ? 'Finished' : 'In progress'}
-              </span>
-            </TableHeader>
-
-            {this.props.stage.finished &&
-              <div>
-                {this.state.showProgress ? (
-                  <StageProgress ranking={this.props.stage.progress} />
-                ) : (
-                  <StageRanking ranking={this.props.stage.ranking} />
-                )}
-                <ProgressButton onClick={this.toggleProgress}>
-                  {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
-                </ProgressButton>
-              </div>
-            }
-
+            <TableHeader
+              title={this.props.stage.country}
+              subtitle={this.props.stage.finished ? 'Finished' : 'In progress'}
+            />
           </Card>
 
           <hr />
+
+          {this.props.stage.finished &&
+          <Fragment>
+            <Card>
+              <TableHeader title={'Stage ranking'} />
+
+              {this.state.showProgress ? (
+                <StageProgress ranking={this.props.stage.progress} />
+              ) : (
+                <StageRanking ranking={this.props.stage.ranking} />
+              )}
+              <ProgressButton onClick={this.toggleProgress}>
+                {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
+              </ProgressButton>
+            </Card>
+
+            <hr />
+          </Fragment>
+          }
 
           {splits}
 

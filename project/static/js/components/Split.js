@@ -40,11 +40,10 @@ class Split extends React.Component {
 
     return (
       <Card>
-
-        <TableHeader>
-          <h4>{this.props.split.order}. {this.props.split.track}</h4>
-          <span className="text-muted weather">{this.props.split.weather}</span>
-        </TableHeader>
+        <TableHeader
+          title={`${this.props.split.order}. ${this.props.split.track}`}
+          subtitle={this.props.split.weather}
+        />
 
         {(this.props.split.active || this.props.split.finished) && ranking}
 
@@ -57,7 +56,6 @@ class Split extends React.Component {
             {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
           </ProgressButton>
         }
-
       </Card>
     )
   }

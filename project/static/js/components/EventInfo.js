@@ -14,9 +14,9 @@ class EventInfo extends React.Component {
       <div>
 
         <Card>
-          <TableHeader>
-            <h4>{this.props.finished ? 'Event finished' : 'Event in progress'}</h4>
-          </TableHeader>
+          <TableHeader
+            title={this.props.finished ? 'Event finished' : 'Event in progress'}
+          />
           <table className="table">
             <tbody>
               <tr>
@@ -39,16 +39,12 @@ class EventInfo extends React.Component {
 
         {this.props.finished ? (
           <Card>
-            <TableHeader>
-              <h4>General ranking</h4>
-            </TableHeader>
+            <TableHeader title={'General ranking'} />
             <EventRanking ranking={this.props.ranking} />
           </Card>
         ) : (
           <Card>
-            <TableHeader>
-              <h4>Players</h4>
-            </TableHeader>
+            <TableHeader title={'Players'} />
             <Players players={this.props.players} />
           </Card>
         )}

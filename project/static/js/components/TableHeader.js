@@ -5,7 +5,14 @@ const TableHeader = (props) => {
     <div
       className="card-header d-flex align-items-baseline justify-content-between"
     >
-      {props.children}
+      <h4>
+        {props.title}
+      </h4>
+      {props.subtitle &&
+        <span className="text-muted weather">
+          {props.subtitle}
+        </span>
+      }
     </div>
   )
 }
