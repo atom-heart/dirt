@@ -29,11 +29,11 @@ class FinishSplitButton extends React.Component {
     } else if (this.split.last_in_stage) {
       btnText = 'Finish stage'
     } else {
-      btnText = 'Finish split'
+      btnText = 'Start next split'
     }
 
     return (
-      <ProgressButton onClick={this.finishSplit}>
+      <ProgressButton style={{borderTop: 0, borderRadius: '4px'}} onClick={this.finishSplit}>
         {btnText}
       </ProgressButton>
     )

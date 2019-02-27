@@ -4,6 +4,8 @@ from sqlalchemy import func, and_, case, event, or_
 from datetime import timedelta as td
 from datetime import datetime
 
+from pprint import pprint
+
 
 #### Games ############################################################
 #######################################################################
@@ -360,11 +362,36 @@ class Split(db.Model):
 
 
     def get_progress(self):
+        x = db.session.query(
+                Player.id,
+                Player.name,
+                case([(func.sum(case([(Time.time.isnot(None), 1)], else_=0)) == self.order, func.sum(Time.time))], else_=None),
+                case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False))\
+            .join(Time, Time.player_id == Player.id)\
+            .join(Split, Split.id == Time.split_id)\
+            .join(EventPlayer, and_(
+                EventPlayer.player_id == Player.id,
+                EventPlayer.event_id == self.stage.event_id))\
+            .filter(Split.stage_id == self.stage_id)\
+            .filter(Split.order <= self.order)\
+            .group_by(Player.id, EventPlayer.player_id, EventPlayer.order)\
+            .order_by(
+                case([(case([(func.sum(case([(Time.time.isnot(None), 1)], else_=0)) == self.order, func.sum(Time.time))], else_=None).isnot(None), 0)], else_=1),
+                case([(func.sum(case([(Time.time.isnot(None), 1)], else_=0)) == self.order, func.sum(Time.time))], else_=None),
+                case([(case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False) == True, 0)], else_=1),
+                EventPlayer.order)\
+            .all()
+
+        pprint(x)
+
+        return x
+
         return db.session.query(
                 Player.id,
                 Player.name,
                 func.sum(Time.time),
-                case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False))\
+                case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False),
+                func.count(case([(Time.time.isnot(None), 1)], else_=0)))\
             .join(Time, Time.player_id == Player.id)\
             .join(Split, Split.id == Time.split_id)\
             .join(EventPlayer, and_(

@@ -21,7 +21,17 @@ const SplitProgress = props => {
         <td>–</td>
         <td>–</td>
         <td>{player.name}</td>
-        <td colSpan="2">disqualified</td>
+        <td colSpan="3">disqualified</td>
+      </tr>
+    )
+  })
+
+  props.ranking.not_finished.forEach(player => {
+    ranking.push(
+      <tr key={player.id} player={player}>
+        <td colSpan="2"></td>
+        <td>{player.name}</td>
+        <td colSpan="3"></td>
       </tr>
     )
   })

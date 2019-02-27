@@ -1,7 +1,7 @@
 import React from 'react'
 
 const ProgressButton = props => (
-  <div className="card-footer border-top">
+  <div className="card-footer" style={props.style}>
     <button
       onClick={props.onClick}
       className="btn btn-link progress-toggle"

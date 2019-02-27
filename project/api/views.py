@@ -35,7 +35,7 @@ def api_event(id):
         'players': normalize(('id', 'name', 'order', 'car_id', 'car_name'), _event.get_players())
     }
 
-    if (_event.finished):
+    if _event.finished:
         event['ranking'] = get_event_ranking(_event.id)
 
     stages = [{
@@ -79,8 +79,7 @@ def api_stage(id):
 
         if _split.active or _split.finished:
             split['ranking'] = get_split_ranking(_split.id)
-
-        if _split.finished:
+        # if _split.finished:
             split['progress'] = get_split_progress(_split.id)
 
         splits.append(split)
@@ -121,7 +120,8 @@ def api_finish_split(id):
             'id': next_split.id,
             'active': True,
             'finished': next_split.finished,
-            'ranking': get_split_ranking(next_split.id)
+            'ranking': get_split_ranking(next_split.id),
+            'progress': get_split_progress(next_split.id)
         })
 
     if _split.last_in_stage:
@@ -179,7 +179,8 @@ def api_turn_update(id):
     split = {
         'id': turn.split.id,
         'finished': turn.split.finished,
-        'ranking': get_split_ranking(turn.split.id)
+        'ranking': get_split_ranking(turn.split.id),
+        'progress': get_split_progress(turn.split.id)
     }
 
     return jsonify(split), 200

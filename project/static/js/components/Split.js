@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 
 import { Card } from 'reactstrap'
 
@@ -39,24 +39,32 @@ class Split extends React.Component {
     )
 
     return (
-      <Card>
-        <TableHeader
-          title={`${this.props.split.order}. ${this.props.split.track}`}
-          subtitle={this.props.split.weather}
-        />
+      <Fragment>
+        <Card>
+          <TableHeader
+            title={`${this.props.split.order}. ${this.props.split.track}`}
+            subtitle={this.props.split.weather}
+          />
 
-        {(this.props.split.active || this.props.split.finished) && ranking}
+          {(this.props.split.active || this.props.split.finished) && ranking}
+
+          {(this.props.split.active || this.props.split.finished) &&
+            <ProgressButton onClick={this.toggleProgress}>
+              {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
+            </ProgressButton>
+          }
+        </Card>
 
         {(this.props.split.finished && this.props.split.active) &&
-          <FinishSplitButton splitId={this.props.split.id} />
+          <Fragment>
+            <Card>
+              <FinishSplitButton
+                splitId={this.props.split.id}
+              />
+            </Card>
+          </Fragment>
         }
-
-        {(this.props.split.finished && !this.props.split.active) &&
-          <ProgressButton onClick={this.toggleProgress}>
-            {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
-          </ProgressButton>
-        }
-      </Card>
+      </Fragment>
     )
   }
 }
