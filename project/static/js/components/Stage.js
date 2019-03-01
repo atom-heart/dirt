@@ -77,7 +77,7 @@ class Stage extends React.Component {
       })
 
       return (
-        <div>
+        <Fragment>
           <Card>
             <TableHeader
               title={this.props.stage.country}
@@ -88,33 +88,27 @@ class Stage extends React.Component {
           <hr />
 
           {this.props.stage.finished &&
-          <Fragment>
-            <Card>
-              <TableHeader title={'Stage ranking'} />
+            <Fragment>
+              <Card>
+                <TableHeader title="Stage ranking" />
 
-              {this.state.showProgress ? (
-                <StageProgress ranking={this.props.stage.progress} />
-              ) : (
-                <StageRanking ranking={this.props.stage.ranking} />
-              )}
-              <ProgressButton onClick={this.toggleProgress}>
-                {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
-              </ProgressButton>
-            </Card>
+                {this.state.showProgress ? (
+                  <StageProgress ranking={this.props.stage.progress} />
+                ) : (
+                  <StageRanking ranking={this.props.stage.ranking} />
+                )}
 
-            <hr />
-          </Fragment>
+                <ProgressButton onClick={this.toggleProgress} disabled={this.props.stage.order === 1}>
+                  {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
+                </ProgressButton>
+              </Card>
+
+              <hr />
+            </Fragment>
           }
 
           {splits}
-
-          {this.props.stage.finished &&
-            <div>
-              <hr />
-              <StageFinishedFooter />
-            </div>
-          }
-        </div>
+        </Fragment>
       )
     }
   }

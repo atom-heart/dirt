@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
@@ -29,7 +29,7 @@ class FinishSplitButton extends React.Component {
     } else if (this.split.last_in_stage) {
       btnText = 'Finish stage'
     } else {
-      btnText = 'Start next split'
+      btnText = 'Finish split'
     }
 
     return (

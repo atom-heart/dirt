@@ -23,11 +23,11 @@ class Split extends React.Component {
     this.toggleModal = this.toggleModal.bind(this)
   }
 
-  toggleProgress(event) {
+  toggleProgress() {
     this.setState({ showProgress: !this.state.showProgress })
   }
 
-  toggleModal(e) {
+  toggleModal() {
     this.setState({ showModal: !this.state.showModal })
   }
 
@@ -37,7 +37,7 @@ class Split extends React.Component {
     ) : (
       <SplitRanking split={this.props.split} />
     )
-
+    
     return (
       <Fragment>
         <Card>
@@ -49,7 +49,7 @@ class Split extends React.Component {
           {(this.props.split.active || this.props.split.finished) && ranking}
 
           {(this.props.split.active || this.props.split.finished) &&
-            <ProgressButton onClick={this.toggleProgress}>
+            <ProgressButton onClick={this.toggleProgress} disabled={this.props.split.order === 1}>
               {this.state.showProgress ? 'Back to ranking' : 'Show progress'}
             </ProgressButton>
           }
@@ -57,13 +57,15 @@ class Split extends React.Component {
 
         {(this.props.split.finished && this.props.split.active) &&
           <Fragment>
-            <Card>
-              <FinishSplitButton
-                splitId={this.props.split.id}
-              />
+            {this.props.split.last_in_stage && <hr />}
+
+            <Card style={{marginTop: '-20px'}}>
+              <FinishSplitButton splitId={this.props.split.id} />
             </Card>
           </Fragment>
         }
+
+        {!this.props.split.last_in_stage && <hr />}
       </Fragment>
     )
   }
