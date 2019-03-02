@@ -15,6 +15,7 @@ const SplitRanking = (props) => {
         <td>{player.name}</td>
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
+        <td>{player.prev_time_diff}</td>
       </Turn>
     )
   })
@@ -24,7 +25,7 @@ const SplitRanking = (props) => {
       <Turn key={player.id} split={props.split} player={player}>
         <td>–</td>
         <td>{player.name}</td>
-        <td colSpan="2">disqualified</td>
+        <td colSpan="3">disqualified</td>
       </Turn>
     )
   })
@@ -34,7 +35,7 @@ const SplitRanking = (props) => {
       <TurnInactive key={player.id}>
         <td>–</td>
         <td>{player.name}</td>
-        <td colSpan="2">previously disqualified</td>
+        <td colSpan="3">previously disqualified</td>
       </TurnInactive>
     )
   })
@@ -44,7 +45,7 @@ const SplitRanking = (props) => {
       <Turn key={player.id} split={props.split} player={player}>
         <td></td>
         <td>{player.name}</td>
-        <td colSpan="2"></td>
+        <td colSpan="3"></td>
       </Turn>
     )
   })
@@ -56,7 +57,8 @@ const SplitRanking = (props) => {
           <th className="pos" scope="col">Pos.</th>
           <th scope="col">Name</th>
           <th scope="col">Time</th>
-          <th scope="col">Diff.</th>
+          <th scope="col">First Diff.</th>
+          <th scope="col">Prev. Diff.</th>
         </tr>
       </thead>
       <tbody>

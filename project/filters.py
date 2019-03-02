@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-def timefilter(td, hours=False):
+def timefilter(td, hours=False, diff=False):
     if td == None:
         return None
 
@@ -8,7 +8,7 @@ def timefilter(td, hours=False):
         td *= -1
         pre = '-'
     else:
-        pre = ''
+        pre = '+' if diff else ''
 
     # Determine time intervals
     h = td.seconds // 3600

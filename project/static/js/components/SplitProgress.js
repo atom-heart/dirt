@@ -11,6 +11,7 @@ const SplitProgress = props => {
         <td>{player.name}</td>
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
+        <td>{player.prev_time_diff}</td>
       </tr>
     )
   })
@@ -21,7 +22,7 @@ const SplitProgress = props => {
         <td>–</td>
         <td>–</td>
         <td>{player.name}</td>
-        <td colSpan="3">disqualified</td>
+        <td colSpan="4">disqualified</td>
       </tr>
     )
   })
@@ -31,7 +32,7 @@ const SplitProgress = props => {
       <tr key={player.id} player={player}>
         <td colSpan="2"></td>
         <td>{player.name}</td>
-        <td colSpan="3"></td>
+        <td colSpan="4"></td>
       </tr>
     )
   })
@@ -44,7 +45,8 @@ const SplitProgress = props => {
           <th scope="col">Diff.</th>
           <th scope="col">Name</th>
           <th scope="col">Time</th>
-          <th scope="col">Diff.</th>
+          <th scope="col">First Diff.</th>
+          <th scope="col">Prev. Diff.</th>
         </tr>
       </thead>
       <tbody>

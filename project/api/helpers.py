@@ -65,12 +65,19 @@ def add_pos_diffs(prev, curr):
 def add_time_diffs(ranking):
     """Determines time differences"""
     first = ranking[0]
+    prev = None
 
-    for player in ranking:
-        if player['time'] and player is not first:
-            player['time_diff'] = player['time'] - first['time']
-        else:
-            player['time_diff'] = None
+    for pos, player in enumerate(ranking, start=1):
+        player['time_diff'] = None
+        player['prev_time_diff'] = None
+
+        if player['time']:
+            if pos is not 1:
+                player['time_diff'] = player['time'] - first['time']
+
+                if pos is not 2:
+                    player['prev_time_diff'] = player['time'] - prev['time']
+
         prev = player
 
     return ranking
@@ -80,7 +87,8 @@ def format_times_diffs(ranking):
     """Formats times and time differences"""
     for player in ranking:
         player['time'] = timefilter(player['time'])
-        player['time_diff'] = timefilter(player['time_diff'])
+        player['time_diff'] = timefilter(player['time_diff'], diff=True)
+        player['prev_time_diff'] = timefilter(player['prev_time_diff'], diff=True)
 
     return ranking
 

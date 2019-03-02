@@ -11,6 +11,7 @@ const StageRanking = props => {
         <td>{player.points}</td>
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
+        <td>{player.prev_time_diff}</td>
       </tr>
     )
   })
@@ -21,7 +22,7 @@ const StageRanking = props => {
         <td>{player.position}</td>
         <td>{player.name}</td>
         <td>{player.points}</td>
-        <td colSpan="2">disqualified</td>
+        <td colSpan="3">disqualified</td>
       </tr>
     )
   })
@@ -34,7 +35,8 @@ const StageRanking = props => {
           <th scope="col">Name</th>
           <th scope="col">Pts.</th>
           <th scope="col">Time</th>
-          <th scope="col">Diff.</th>
+          <th scope="col">First Diff.</th>
+          <th scope="col">Prev. Diff.</th>
         </tr>
       </thead>
       <tbody>
