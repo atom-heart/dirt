@@ -64,7 +64,6 @@ def add_pos_diffs(prev, curr):
 
 def add_time_diffs(ranking):
     """Determines time differences"""
-    first = ranking[0]
     prev = None
 
     for pos, player in enumerate(ranking, start=1):
@@ -73,7 +72,7 @@ def add_time_diffs(ranking):
 
         if player['time']:
             if pos is not 1:
-                player['time_diff'] = player['time'] - first['time']
+                player['time_diff'] = player['time'] - ranking[0]['time']
 
                 if pos is not 2:
                     player['prev_time_diff'] = player['time'] - prev['time']

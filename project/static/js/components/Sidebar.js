@@ -38,12 +38,27 @@ class Sidebar extends React.Component {
         <NavSection>
           {stages}
         </NavSection>
+
+        {this.props.eventFinished &&
+          <NavSection>
+            <li className="nav-item">
+              <NavLink
+                exact
+                to={`/event/${this.props.eventId}/standings`}
+                className="nav-link"
+              >
+                Standings
+              </NavLink>
+            </li>
+          </NavSection>
+        }
       </nav>
     )
   }
 }
 
 const mapStateToProps = state => ({
+  eventFinished: state.event.finished,
   stages: state.stages.byId,
   stageIds: state.stages.allIds
 })

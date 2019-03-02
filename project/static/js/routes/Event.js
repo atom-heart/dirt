@@ -9,6 +9,7 @@ import Sidebar from '../components/Sidebar'
 import PageLoader from '../components/PageLoader'
 import EventInfo from '../components/EventInfo'
 import Stage from '../components/Stage'
+import Standings from '../components/Standings'
 
 import { Row } from 'reactstrap'
 
@@ -59,6 +60,11 @@ class Event extends React.Component {
               exact
               path={`/event/${this.eventId}/:stageOrder`}
               component={Stage}
+            />
+            <Route
+              exact
+              path={`/event/${this.eventId}/standings`}
+              component={Standings}
             />
           </div>
         </Row>

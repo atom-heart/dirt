@@ -1,12 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { Card, CardBody } from 'reactstrap'
+import { Card } from 'reactstrap'
 
-import EventRanking from './EventRanking'
 import Players from './Players'
 import TableHeader from './TableHeader'
-import Modal from './Modal'
 
 class EventInfo extends React.Component {
   render() {
@@ -37,17 +35,11 @@ class EventInfo extends React.Component {
 
         <hr />
 
-        {this.props.finished ? (
-          <Card>
-            <TableHeader title={'General ranking'} />
-            <EventRanking ranking={this.props.ranking} />
-          </Card>
-        ) : (
-          <Card>
-            <TableHeader title={'Players'} />
-            <Players players={this.props.players} />
-          </Card>
-        )}
+
+        <Card>
+          <TableHeader title={'Players'} />
+          <Players players={this.props.players} />
+        </Card>
 
       </div>
     )

@@ -56,7 +56,7 @@ class Stage extends React.Component {
 
   render() {
     if (!this.props.stage) {
-      return <div>No such stage.</div>
+      return null
     }
 
     else if (this.props.stage.error) {

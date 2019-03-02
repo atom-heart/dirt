@@ -38,7 +38,7 @@ class Split extends React.Component {
       <SplitRanking split={this.props.split} />
     )
 
-    const finishButtonStyle = !this.props.split.last_in_stage ? {marginTop: '-20px'} : {}
+    const finishButtonStyle = !this.props.split.last_in_stage ? {marginTop: '-15px'} : {}
 
     return (
       <Fragment>
