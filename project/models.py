@@ -1,6 +1,7 @@
 from project import db
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from sqlalchemy import func, and_, case, event, or_
+from sqlalchemy.orm import aliased
 from datetime import timedelta as td
 from datetime import datetime
 
@@ -357,28 +358,36 @@ class Split(db.Model):
                 case([(Time.disqualified == True, 0),
                     (StageRanking.disqualified == True, 1)],
                     else_=2),
+                Time.order,
                 EventPlayer.order)\
             .all()
 
-
     def get_progress(self):
+        # Aliase used to select Time table twice, to ensure right player order
+        # in split progress (based on previous splits)
+        Time_alias = aliased(Time)
+
         return db.session.query(
                 Player.id,
                 Player.name,
                 case([(func.sum(case([(Time.time.isnot(None), 1)], else_=0)) == self.order, func.sum(Time.time))], else_=None),
                 case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False))\
             .join(Time, Time.player_id == Player.id)\
+            .join(Time_alias, and_(
+                Time_alias.player_id == Player.id,
+                Time_alias.split_id == self.id))\
             .join(Split, Split.id == Time.split_id)\
             .join(EventPlayer, and_(
                 EventPlayer.player_id == Player.id,
                 EventPlayer.event_id == self.stage.event_id))\
             .filter(Split.stage_id == self.stage_id)\
             .filter(Split.order <= self.order)\
-            .group_by(Player.id, EventPlayer.player_id, EventPlayer.order)\
+            .group_by(Player.id, Time_alias.order, EventPlayer.player_id, EventPlayer.order)\
             .order_by(
                 case([(case([(func.sum(case([(Time.time.isnot(None), 1)], else_=0)) == self.order, func.sum(Time.time))], else_=None).isnot(None), 0)], else_=1),
                 case([(func.sum(case([(Time.time.isnot(None), 1)], else_=0)) == self.order, func.sum(Time.time))], else_=None),
                 case([(case([(func.sum(case([(Time.disqualified == True, 1),], else_=0)) > 0, True),], else_=False) == True, 0)], else_=1),
+                Time_alias.order,
                 EventPlayer.order)\
             .all()
 
@@ -405,6 +414,7 @@ class Time(db.Model):
     __tablename__ = 'times'
 
     id = db.Column(db.Integer, primary_key=True)
+    order = db.Column(db.Integer, nullable=True)
     time = db.Column(db.Interval, nullable=True)
     disqualified = db.Column(db.Boolean, nullable=True)
 

@@ -101,10 +101,12 @@ def api_finish_split(id):
 
     _split.active = False
 
+    split_prog = get_split_progress(_split.id)
+
     response = {'splits': [{
         'id': _split.id,
         'active': False,
-        'progress': get_split_progress(_split.id)
+        'progress': split_prog
     }]}
 
     if not (_split.last_in_stage and _split.stage.last_in_event):
@@ -113,6 +115,15 @@ def api_finish_split(id):
 
         # Next split will automatically finish when all players are disqualified
         next_split.finished = next_split.should_finish()
+
+        # Set right player order, based on last split progress (first goes first)
+        for player in split_prog['finished']:
+            _turn = Time.query\
+                .filter(Time.player_id == player['id'])\
+                .filter(Time.split_id == next_split.id).first()
+
+            _turn.order = player['position']
+            db.session.add(_turn)
 
         db.session.add(next_split)
 
