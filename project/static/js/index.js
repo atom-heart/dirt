@@ -13,6 +13,7 @@ import ModalRoot from './components/ModalRoot'
 import store from './store.js'
 
 const Event = lazy(() => import('./routes/Event'))
+const CreateEvent = lazy(() => import('./routes/CreateEvent'))
 
 import { Container } from 'reactstrap'
 
@@ -24,6 +25,7 @@ ReactDOM.render((
           <Suspense fallback={<PageLoader />}>
             <Route path="/" exact render={() => { return <div>Hello!</div> }} />
             <Route path="/event/:id" component={Event} />
+            <Route path="/create" exact component={CreateEvent} />
           </Suspense>
 
           <Route path="/" component={ModalRoot} />

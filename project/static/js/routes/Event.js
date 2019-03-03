@@ -5,7 +5,7 @@ import { Route } from 'react-router-dom'
 
 import { fetchEvent } from '../agents/event-agents'
 
-import Sidebar from '../components/Sidebar'
+import Menu from '../components/Menu'
 import PageLoader from '../components/PageLoader'
 import EventInfo from '../components/EventInfo'
 import Stage from '../components/Stage'
@@ -46,7 +46,7 @@ class Event extends React.Component {
     else {
       return (
         <Row>
-          <Sidebar
+          <Menu
             eventId={this.eventId}
             eventName={this.props.name}
           />
