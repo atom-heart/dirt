@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
+import '../node_modules/open-iconic/font/css/open-iconic-bootstrap.min.css'
 import '../css/layout.css'
 
 import ErrorBoundary from './components/ErrorBoundary'

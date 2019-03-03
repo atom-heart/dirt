@@ -1,5 +1,7 @@
 import React from 'react'
 
+import DiffIcon from './DiffIcon'
+
 const SplitProgress = props => {
   let ranking = []
 
@@ -7,7 +9,7 @@ const SplitProgress = props => {
     ranking.push(
       <tr key={player.id}>
         <td>{player.position}</td>
-        <td>{player.position_diff}</td>
+        <td><DiffIcon diff={player.position_diff} /></td>
         <td>{player.name}</td>
         <td>{player.time}</td>
         <td>{player.time_diff}</td>
