@@ -2,7 +2,7 @@ from datetime import timedelta as td
 
 from project import db
 from project.models import Game, Country, Track, Player, CarClass, Car,\
-                           Weather, Split, Time, Event, EventPlayer, Stage, StageRanking
+                           Weather, Split, Turn, Event, EventPlayer, Stage, StageRanking
 
 
 print('Creating new tables...', end=' ')
@@ -80,24 +80,24 @@ splits = [
     Split(track=tracks[1], weather=weather[3], order=1, last_in_stage=True, active=False),
 ]
 
-# Create times
-times = [
-    Time(player=players[0], split=splits[0]),
-    Time(player=players[1], split=splits[0]),
-    Time(player=players[0], split=splits[1]),
-    Time(player=players[1], split=splits[1]),
-    Time(player=players[0], split=splits[2]),
-    Time(player=players[1], split=splits[2]),
-    Time(player=players[2], split=splits[0]),
-    Time(player=players[2], split=splits[1]),
-    Time(player=players[2], split=splits[2]),
-    Time(player=players[3], split=splits[1]),
-    Time(player=players[3], split=splits[0]),
-    Time(player=players[3], split=splits[2]),
-    Time(player=players[0], split=splits[3]),
-    Time(player=players[1], split=splits[3]),
-    Time(player=players[2], split=splits[3]),
-    Time(player=players[3], split=splits[3]),
+# Create turns
+turns = [
+    Turn(player=players[0], split=splits[0]),
+    Turn(player=players[1], split=splits[0]),
+    Turn(player=players[0], split=splits[1]),
+    Turn(player=players[1], split=splits[1]),
+    Turn(player=players[0], split=splits[2]),
+    Turn(player=players[1], split=splits[2]),
+    Turn(player=players[2], split=splits[0]),
+    Turn(player=players[2], split=splits[1]),
+    Turn(player=players[2], split=splits[2]),
+    Turn(player=players[3], split=splits[1]),
+    Turn(player=players[3], split=splits[0]),
+    Turn(player=players[3], split=splits[2]),
+    Turn(player=players[0], split=splits[3]),
+    Turn(player=players[1], split=splits[3]),
+    Turn(player=players[2], split=splits[3]),
+    Turn(player=players[3], split=splits[3]),
 ]
 
 # Create event
@@ -156,7 +156,7 @@ db.session.add_all(tracks)
 db.session.add_all(car_classes)
 db.session.add_all(cars)
 db.session.add_all(splits)
-db.session.add_all(times)
+db.session.add_all(turns)
 db.session.add_all(event_players)
 db.session.add(event)
 db.session.add_all(stages)

@@ -1,7 +1,7 @@
 from project import db as _db
 from project import app as _app
 from project import instance_path
-from project.models import Player, Game, Weather, Country, Car, CarClass, Event, Split, Track, Time, Stage, StageRanking, EventPlayer
+from project.models import Player, Game, Weather, Country, Car, CarClass, Event, Split, Track, Turn, Stage, StageRanking, EventPlayer
 from project.filters import timefilter
 
 from datetime import timedelta as td
@@ -88,14 +88,14 @@ def stage1():
     stage1.stage_ranking.extend([sr1, sr2, sr3])
 
     split1 = Split(stage_id=1, track_id=1, weather_id=1, order=1)
-    time1_1 = Time(player_id=1, split=split1)
-    time1_2 = Time(player_id=2, split=split1)
-    time1_3 = Time(player_id=3, split=split1)
+    time1_1 = Turn(player_id=1, split=split1)
+    time1_2 = Turn(player_id=2, split=split1)
+    time1_3 = Turn(player_id=3, split=split1)
 
     split2 = Split(stage_id=1, track_id=1, weather_id=1, order=2)
-    time2_1 = Time(player_id=1, split=split2)
-    time2_2 = Time(player_id=2, split=split2)
-    time2_3 = Time(player_id=3, split=split2)
+    time2_1 = Turn(player_id=1, split=split2)
+    time2_2 = Turn(player_id=2, split=split2)
+    time2_3 = Turn(player_id=3, split=split2)
 
     tables = [
         stage1, sr1, sr2, sr3,

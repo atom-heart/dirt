@@ -5,7 +5,7 @@ from json import loads as json_loads
 from project import db
 from project.filters import timefilter
 
-from project.models import Split, Stage, Event, Time, Player, StageRanking
+from project.models import Split, Stage, Event, Turn, Player, StageRanking
 from project.api.rankings import assign_points, get_event_ranking, get_split_ranking, get_split_progress, get_stage_ranking, get_stage_progress, get_event_ranking
 from project.api.helpers import normalize, add_positions, strToTimedelta, add_points, get_next_split, get_prev_split
 
@@ -118,9 +118,9 @@ def api_finish_split(id):
 
         # Set right player order, based on last split progress (first goes first)
         for player in split_prog['finished']:
-            _turn = Time.query\
-                .filter(Time.player_id == player['id'])\
-                .filter(Time.split_id == next_split.id).first()
+            _turn = Turn.query\
+                .filter(Turn.player_id == player['id'])\
+                .filter(Turn.split_id == next_split.id).first()
 
             _turn.order = player['position']
             db.session.add(_turn)
@@ -173,7 +173,7 @@ def api_turn_update(id):
     if not ('time' in args and 'disqualified' in args):
         abort(400)
 
-    turn = Time.query.get(id)
+    turn = Turn.query.get(id)
     if not turn:
         abort(404)
 
