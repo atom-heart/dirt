@@ -6,14 +6,14 @@ const DiffIcon = (props) => {
   }
 
   else {
-    const icon = props.diff > 0
+    const iconClass = props.diff > 0
       ? 'oi-caret-top text-success'
       : 'oi-caret-bottom text-danger'
 
     return (
       <Fragment>
         <span
-          className={'oi ' + icon}
+          className={'oi ' + iconClass}
           style={{fontSize: '.7em'}}
         />
         <span style={{marginLeft: 5}}>

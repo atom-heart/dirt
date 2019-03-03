@@ -25,16 +25,41 @@ class TurnModal extends React.Component {
   constructor(props) {
     super(props)
 
+    this.listenKeyboard = this.listenKeyboard.bind(this)
     this.onClose = this.onClose.bind(this)
     this.onSend = this.onSend.bind(this)
+  }
+
+  listenKeyboard(event) {
+    if (event.key === 'Enter' || event.keyCode === 13) {
+      this.onSend(event)
+    }
+
+    else if (
+      event.key === 'd' ||
+      event.key === 'D' ||
+      event.keyCode === 68 ||
+      event.keyCode === 100
+    ) {
+      document.activeElement.blur()
+      this.props.toggleDisq()
+    }
+  }
+
+  componentDidMount() {
+    window.addEventListener('keydown', this.listenKeyboard, true)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.listenKeyboard, true)
   }
 
   onClose() {
     this.props.hideModal()
   }
 
-  onSend(e) {
-    e.preventDefault()
+  onSend(event) {
+    event.preventDefault()
 
     this.props.sendTurn({
       turnId: this.props.turnId,
@@ -86,9 +111,9 @@ class TurnModal extends React.Component {
             </Button>
           </ModalFooter>
 
-          { this.props.error &&
+          {this.props.error &&
             <ModalError>
-              An issue occured. Give it another try.
+              An error occured. Give it another try.
             </ModalError>
           }
 
