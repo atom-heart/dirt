@@ -108,6 +108,13 @@ class Stage extends React.Component {
           }
 
           {splits}
+
+          {this.props.stage.finished &&
+            <Fragment>
+              <hr />
+              <StageFinishedFooter />
+            </Fragment>
+          }
         </Fragment>
       )
     }
